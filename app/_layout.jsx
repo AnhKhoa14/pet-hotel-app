@@ -35,6 +35,9 @@ export default function RootLayout() {
     "open-sans": require("./../assets/fonts/OpenSans-Regular.ttf"),
     "open-sans-bold": require("./../assets/fonts/OpenSans-Bold.ttf"),
     "open-sans-medium": require("./../assets/fonts/OpenSans-Medium.ttf"),
+    "nunito": require("./../assets/fonts/Nunito-Regular.ttf"),
+    "nunito-bold": require("./../assets/fonts/Nunito-Bold.ttf"),
+    "nunito-medium": require("./../assets/fonts/Nunito-Medium.ttf"),
   });
 
   return (
@@ -59,7 +62,7 @@ export default function RootLayout() {
             title: "Search Results",
             headerTitleAlign: "center",
             headerTitleStyle: {
-              fontFamily: "open-sans-bold",
+              fontFamily: "nunito-bold",
               color: "#4EA0B7",
             },
           }}

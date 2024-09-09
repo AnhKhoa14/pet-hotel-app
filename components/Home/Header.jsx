@@ -1,4 +1,4 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, StyleSheet } from "react-native";
 import React from "react";
 import { useUser } from "@clerk/clerk-expo";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
@@ -8,14 +8,34 @@ export default function Header() {
 
   return (
     <View style={{ padding: 10 }}>
-      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+      <View style={styles.container}>
         <Image
           source={require("./../../assets/images/logo.png")}
-          style={{ width: 80, height: 130 }}
+          style={styles.logo}
         />
-        <Text style={{ fontSize: 24, fontWeight: "bold", marginRight: 20, color: '#4EA0B7'}}>Home</Text>
+        <Text style={styles.title}>Home</Text>
         <FontAwesome5 name="user-alt" size={25} color='#4EA0B7' />
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  logo: {
+    width: 80,
+    height: 130,
+  },
+
+  title: {
+    fontSize: 24,
+    marginRight: 20,
+    color: '#4EA0B7',
+    fontFamily: 'nunito-bold',
+  },
+});

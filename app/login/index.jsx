@@ -47,7 +47,7 @@ export default function LoginScreen() {
         textAlign: 'center',
         marginTop: 60,
         color: '#4EA0B7',
-        fontFamily: 'open-sans-bold',
+        fontFamily: 'nunito-bold',
       }}>Welcome to APEHOME</Text>
       <Image source={require('./../../assets/images/logo.png')} 
         style={{ width: 300, height: 400, alignSelf: 'center'}}
@@ -61,7 +61,7 @@ export default function LoginScreen() {
         <Text style={{
           fontSize: 16,
           marginBottom: 10,
-          fontFamily: 'open-sans',
+          fontFamily: 'nunito',
           color: '#4EA0B7',
         }}>Where all of your pets’ needs are right here!</Text>
 
@@ -76,7 +76,7 @@ export default function LoginScreen() {
             textAlign: 'center',
             fontSize: 16,
             color: '#4EA0B7',
-            fontFamily: 'open-sans-bold',
+            fontFamily: 'nunito-bold',
           }}>Create Account</Text>
         </Pressable>
         <Pressable onPress={() => router.push('/(tabs)/home')} style={{
@@ -90,7 +90,7 @@ export default function LoginScreen() {
             textAlign: 'center',
             fontSize: 16,
             color: '#4EA0B7',
-            fontFamily: 'open-sans-bold',
+            fontFamily: 'nunito-bold',
           }}>Login</Text>
         </Pressable>
       </View>
