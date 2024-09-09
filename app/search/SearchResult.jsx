@@ -12,6 +12,7 @@ import { useRoute } from "@react-navigation/native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import RNPickerSelect from "react-native-picker-select";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function SearchResult() {
   const route = useRoute();
@@ -64,11 +65,10 @@ export default function SearchResult() {
       <View style={styles.rowContainer}>
         <View style={styles.rowItem}>
           <Text style={styles.rowItemText}>
-            Sort <FontAwesome name="sort" size={20} color="black" />
+            Sort <FontAwesome name="sort" size={15} color="black" />
           </Text>
         </View>
 
-        {/* Touchable to handle Locality dropdown */}
         <TouchableOpacity style={styles.rowItem} onPress={handleLocalityPress}>
           <Text style={styles.rowItemText}>
             Locality{" "}
@@ -149,10 +149,50 @@ export default function SearchResult() {
 
       <ScrollView style={{ marginTop: 20 }}>
         <View style={scrollStyles.container}>
-          <Image
-            source={require("./../../assets/images/hotel.jpg")}
-            style={scrollStyles.image}
-          />
+          <View style={scrollStyles.imageContainer}>
+            <Image
+              source={require("./../../assets/images/hotel.jpg")}
+              style={scrollStyles.image}
+            />
+          </View>
+
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              paddingBottom: 5,
+            }}
+          >
+            <View
+              style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
+            >
+              {[...Array(5)].map((_, index) => (
+                <Ionicons
+                  key={index}
+                  name="star"
+                  size={15}
+                  color={index < 4 ? "gold" : "black"}
+                />
+              ))}
+              <Text style={scrollStyles.text}>4.0 (20 Reviewers)</Text>
+            </View>
+          </View>
+
+          <Text style={scrollStyles.title}>Hotel 1</Text>
+
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              paddingTop: 5,
+              justifyContent: "flex-start",
+            }}
+          >
+            <Ionicons name="location" size={20} color="black" />
+            <Text style={scrollStyles.text}>District 9, HCMC</Text>
+          </View>
+
+          <Text style={scrollStyles.text}>300.000 VND</Text>
         </View>
       </ScrollView>
     </View>
@@ -170,11 +210,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     color: "#4EA0B7",
+    fontFamily: "nunito-bold",
   },
   subtitle: {
     fontSize: 18,
     marginTop: 10,
     color: "#4EA0B7",
+    fontFamily: "nunito",
   },
   rowContainer: {
     flexDirection: "row",
@@ -200,6 +242,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 16,
     color: "green",
+    fontFamily: "nunito",
   },
 });
 
@@ -213,6 +256,7 @@ const pickerSelectStyles = StyleSheet.create({
     borderRadius: 4,
     color: "black",
     paddingRight: 30,
+    fontFamily: "nunito",
   },
   inputAndroid: {
     fontSize: 16,
@@ -223,6 +267,7 @@ const pickerSelectStyles = StyleSheet.create({
     borderRadius: 8,
     color: "black",
     paddingRight: 30,
+    fontFamily: "nunito",
   },
 });
 
@@ -230,16 +275,32 @@ const scrollStyles = StyleSheet.create({
   container: {
     padding: 10,
     margin: 10,
-    alignItems: "center",
     borderColor: "#DADADA",
     borderWidth: 1,
     borderRadius: 8,
-    backgroundColor: "#fff", 
+    backgroundColor: "#fff",
+  },
+  imageContainer: {
+    alignItems: "center",
+    marginBottom: 10,
   },
   image: {
-    width: 300, 
+    width: 300,
     height: 130,
-    borderRadius: 4, 
-    resizeMode: "cover", 
+    borderRadius: 4,
+    resizeMode: "cover",
   },
+  text: {
+    alignSelf: "flex-start",
+    fontSize: 16,
+    marginTop: 5,
+    fontFamily: "nunito",
+
+  },
+  title: {
+    alignSelf: "flex-start",
+    fontSize: 16,
+    marginTop: 5,
+    fontFamily: "nunito-bold",
+  }
 });
