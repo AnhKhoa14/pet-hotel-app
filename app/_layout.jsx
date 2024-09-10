@@ -42,7 +42,19 @@ export default function RootLayout() {
 
   return (
     <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
-      <Stack>
+      <Stack
+        screenOptions={{
+          headerTitleAlign: 'center',
+          headerTitleStyle: {
+            fontFamily: 'nunito-bold',
+            color: '#4EA0B7',
+            fontSize:28
+          },
+          headerStyle: {
+            backgroundColor: '#FDFBF6', 
+          },
+        }}
+      >
         <Stack.Screen name="index" />
         <Stack.Screen
           name="(tabs)"
@@ -60,11 +72,42 @@ export default function RootLayout() {
           name="search/SearchResult"
           options={{
             title: "Search Results",
-            headerTitleAlign: "center",
-            headerTitleStyle: {
-              fontFamily: "nunito-bold",
-              color: "#4EA0B7",
-            },
+          }}
+        />
+        <Stack.Screen
+          name="screen/login"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="screen/signup"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="screen/verify"
+          options={{
+            title: 'Verify Account',
+          }}
+        />
+        <Stack.Screen
+          name="screen/init_profile"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="screen/settings"
+          options={{
+            title: 'Settings',
+          }}
+        />
+        <Stack.Screen
+          name="screen/profile"
+          options={{
+            title: 'Profile',
           }}
         />
       </Stack>
