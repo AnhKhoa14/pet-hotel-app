@@ -3,7 +3,7 @@ import { View, TextInput, TouchableOpacity, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';  
 import { commonStyles } from '../../style';
 
-export const PasswordInput = ({placeholder}) => {
+export const PasswordInput = ({placeholder, onPasswordChange}) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [password, setPassword] = useState('');
   const handlePasswordChange = (value) => {

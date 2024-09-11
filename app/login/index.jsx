@@ -4,6 +4,7 @@ import { useOAuth } from '@clerk/clerk-expo'
 import * as Linking from 'expo-linking'
 import * as WebBrowser from 'expo-web-browser'
 import { router } from 'expo-router'
+import { useNavigation } from '@react-navigation/native';
 
 export const useWarmUpBrowser = () => {
   React.useEffect(() => {
@@ -19,6 +20,13 @@ export const useWarmUpBrowser = () => {
 WebBrowser.maybeCompleteAuthSession()
 
 export default function LoginScreen() {
+  const navigation = useNavigation();
+
+  const handleLogin=()=> {
+    router.push('screen/login');
+    console.log('cc');
+  }
+
   useWarmUpBrowser();
   const { startOAuthFlow } = useOAuth({ strategy: 'oauth_google' })
 
@@ -79,7 +87,7 @@ export default function LoginScreen() {
             fontFamily: 'nunito-bold',
           }}>Create Account</Text>
         </Pressable>
-        <Pressable onPress={() => router.push('/screen/login')} style={{
+        <Pressable onPress={handleLogin} style={{
           padding: 20,
           marginTop: 20,
           backgroundColor: '#BEF0FF',
@@ -89,7 +97,7 @@ export default function LoginScreen() {
           <Text style={{
             textAlign: 'center',
             fontSize: 16,
-            color: '#4EA0B7',
+            color: '#4EA0B7', 
             fontFamily: 'nunito-bold',
           }}>Login</Text>
         </Pressable>
