@@ -7,10 +7,20 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { PasswordInput } from '../PasswordInput/passwordInput';
 import googleIcon from '../../assets/images/icons8-google-48.png'
 import facebookIcon from '../../assets/images/icons8-facebook-48.png'
+import { useTranslation } from 'react-i18next';
+import i18n from '../../i18n';
+import ToggleFlag from '../ToggleButtonLanguage/ToggleButton';
 
 const LoginScreen = () => {
   const router = useRouter();
   const [password, setPassword] = useState('');
+  const { t, i18n } = useTranslation();
+  if (!i18n) {
+    console.log('cc');
+  }
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+  };
 
   const handleLogin = () => {
     router.push('/home');
@@ -20,9 +30,9 @@ const LoginScreen = () => {
     setPassword(value);
   };
   return (
-    <SafeAreaView style={commonStyles.container}>
+    <SafeAreaView style={commonStyles.containerContent}>
       <StatusBar barStyle="dark-content" />
-      <Text style={commonStyles.titleText}>Welcome Back!</Text>
+      <Text style={commonStyles.titleText}>{t('welcome')}</Text>
 
       {/* <TouchableOpacity style={styles.flagButton}>
         <Image
@@ -30,7 +40,9 @@ const LoginScreen = () => {
           style={styles.flagIcon}
         />
       </TouchableOpacity> */}
-
+      <View style={{alignItems:'flex-end', marginBottom:20}}>
+      <ToggleFlag/>
+      </View>
       <TextInput
         style={commonStyles.input}
         placeholder="Email or phone number"

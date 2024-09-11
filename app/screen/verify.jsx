@@ -4,57 +4,63 @@ import { useRouter } from 'expo-router';
 import { Button, Icon } from 'react-native-elements';
 import { commonStyles } from '../../style';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-const SignUpScreen = () => {
+import Header from './../../components/Header/header'
+import { useTranslation } from 'react-i18next';
+import i18n from '../../i18n';
+const VerifyScreen = () => {
   const router = useRouter();
-
+  const { t, i18n } = useTranslation();
   const handleVerify = () => {
     router.push('/screen/init_profile');
   };
 
   return (
     <SafeAreaView style={commonStyles.container}>
-      <Text style={commonStyles.subButton}>Please enter the verification code sent to</Text>
-      <Text style={commonStyles.subButton}>excample@gmail.com</Text>
+      <Header title={t('verify')} />
+      <View style={commonStyles.containerContent}>
+        <Text style={commonStyles.subButton}>{t('verifySubText')}</Text>
+        <Text style={commonStyles.subButton}>excample@gmail.com</Text>
 
-      <View style={styles.inputCode}>
-        <TextInput
-          style={styles.input}
-          maxLength={1}
-          keyboardType="numeric"
-        />
-        <TextInput
-          style={styles.input}
-          maxLength={1}
-          keyboardType="numeric"
-        />
-        <TextInput
-          style={styles.input}
-          maxLength={1}
-          keyboardType="numeric"
-        />
-        <TextInput
-          style={styles.input}
-          maxLength={1}
-          keyboardType="numeric"
-        />
-      </View>
+        <View style={styles.inputCode}>
+          <TextInput
+            style={styles.input}
+            maxLength={1}
+            keyboardType="numeric"
+          />
+          <TextInput
+            style={styles.input}
+            maxLength={1}
+            keyboardType="numeric"
+          />
+          <TextInput
+            style={styles.input}
+            maxLength={1}
+            keyboardType="numeric"
+          />
+          <TextInput
+            style={styles.input}
+            maxLength={1}
+            keyboardType="numeric"
+          />
+        </View>
 
 
-      <TouchableOpacity>
-        <Text style={commonStyles.subButton}>Did not receive code? Send again.</Text>
-      </TouchableOpacity>
-      <View style={commonStyles.mainButtonContainer}>
-        <TouchableOpacity onPress={handleVerify} style={commonStyles.mainButton}>
-          <Text style={commonStyles.textMainButton}>VERIFY</Text>
+        <TouchableOpacity>
+          <Text style={commonStyles.subButton}>{t('verifyAgain')}</Text>
         </TouchableOpacity>
+        <View style={commonStyles.mainButtonContainer}>
+          <TouchableOpacity onPress={handleVerify} style={commonStyles.mainButton}>
+            <Text style={commonStyles.textMainButton}>{t('verify')}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
+
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  
+
   inputCode: {
     marginTop: 30,
     flexDirection: 'row',
@@ -72,9 +78,9 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     backgroundColor: '#fff',
     fontSize: 30,
-    flex:1,
+    flex: 1,
     textAlign: 'center',
   },
 });
 
-export default SignUpScreen;
+export default VerifyScreen;
