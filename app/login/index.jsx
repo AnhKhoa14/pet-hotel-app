@@ -65,7 +65,7 @@ export default function LoginScreen() {
           color: '#4EA0B7',
         }}>Where all of your pets’ needs are right here!</Text>
 
-        <Pressable style={{
+        <Pressable onPress={() => router.push('/screen/signup')} style={{
           padding: 20,
           marginTop: 40,
           backgroundColor: '#BEF0FF',
@@ -79,7 +79,7 @@ export default function LoginScreen() {
             fontFamily: 'nunito-bold',
           }}>Create Account</Text>
         </Pressable>
-        <Pressable onPress={() => router.push('/(tabs)/home')} style={{
+        <Pressable onPress={() => router.push('/screen/login')} style={{
           padding: 20,
           marginTop: 20,
           backgroundColor: '#BEF0FF',
