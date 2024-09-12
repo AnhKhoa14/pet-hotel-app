@@ -3,52 +3,66 @@ import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router'; 
 import { commonStyles } from '../../style';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../i18n';
+import Header from './../../components/Header/header'
+import ToggleFlag from '../../components/ToggleButtonLanguage/ToggleButton';
 
 const SettingsScreen = () => {
   const router = useRouter();
   const handleProfile =() => {
     router.push('/screen/profile');
   }
+  const handleChangePassword =()=>{
+    router.push('screen/changePassword');
+  }
+  const { t, i18n } = useTranslation();
 
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+  };
   return (
-    <View style={commonStyles.container}>
+    <SafeAreaView style={commonStyles.container}>
+    <Header title={t('setting')}/>
+    <View style={commonStyles.containerContent} >
       <View style={styles.section}>
-        <Text style={styles.sectionHeader}>Personal information</Text>
-        
+        {/* <Text style={styles.sectionHeader}>Personal information</Text> */}
+                <Text style={styles.sectionHeader}>{t('personalInfo')}</Text>
+
         <TouchableOpacity onPress={handleProfile} style={styles.item}>
-          <Text style={styles.itemText}>Edit profile</Text>
+          <Text style={styles.itemText}>{t('editProfile')}</Text>
           <Text style={styles.arrow}>›</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.item}>
-          <Text style={styles.itemText}>Pet management</Text>
+        <TouchableOpacity  style={styles.item}>
+          <Text style={styles.itemText}>{t('petManagement')}</Text>
           <Text style={styles.arrow}>›</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.item}>
-          <Text style={styles.itemText}>Change password</Text>
-          <Text style={styles.arrow}>›</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.item}>
-          <Text style={styles.itemText}>Sign out</Text>
+        <TouchableOpacity onPress={handleChangePassword} style={styles.item}>
+          <Text style={styles.itemText}>{t('changePassword')}</Text>
           <Text style={styles.arrow}>›</Text>
         </TouchableOpacity>
 
         <View style={styles.item}>
-          <Text style={styles.itemText}>Language</Text>
-          <Image source={{ uri: 'https://flagcdn.com/w320/gb.png' }} style={styles.flag} /> 
+          <Text style={styles.itemText}>{t('language')}</Text>
+          <ToggleFlag/>
         </View>
+
+        <TouchableOpacity style={styles.item}>
+          <Text style={styles.itemText}>{t('signout')}</Text>
+          {/* <Text style={styles.arrow}>›</Text> */}
+        </TouchableOpacity>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionHeader}>Others</Text>
+        <Text style={styles.sectionHeader}>{t('other')}</Text>
 
         <TouchableOpacity style={styles.item}>
           {/* <View style={styles.iconContainer}>
             <Text>💳</Text>
           </View> */}
-          <Text style={styles.itemText}>Payment method</Text>
+          <Text style={styles.itemText}>{t('paymentMethod')}</Text>
           <Text style={styles.arrow}>›</Text>
         </TouchableOpacity>
 
@@ -56,11 +70,12 @@ const SettingsScreen = () => {
           {/* <View style={styles.iconContainer}>
             <Text>⏳</Text>
           </View> */}
-          <Text style={styles.itemText}>Histories</Text>
+          <Text style={styles.itemText}>{t('history')}</Text>
           <Text style={styles.arrow}>›</Text>
         </TouchableOpacity>
       </View>
     </View>
+    </SafeAreaView>
   );
 };
 

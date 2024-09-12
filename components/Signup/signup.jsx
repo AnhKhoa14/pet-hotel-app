@@ -7,9 +7,11 @@ import { commonStyles } from '../../style';
 import { PasswordInput } from '../PasswordInput/passwordInput';
 import googleIcon from '../../assets/images/icons8-google-48.png'
 import facebookIcon from '../../assets/images/icons8-facebook-48.png'
-
+import { useTranslation } from 'react-i18next';
+import i18n from '../../i18n';
 const SignUpScreen = () => {
   const router = useRouter();
+  const { t, i18n } = useTranslation();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfrmPassword] = useState('');
   const handleSignUp = () => {
@@ -23,10 +25,10 @@ const SignUpScreen = () => {
     setConfrmPassword(value);
   };
   return (
-    <SafeAreaView style={commonStyles.container}>
+    <View style={commonStyles.containerContent}>
       <StatusBar barStyle="dark-content" />
 
-      <Text style={commonStyles.titleText}>SIGN UP</Text>
+      {/* <Text style={commonStyles.titleText}>SIGN UP</Text> */}
 
       {/* <TouchableOpacity style={styles.flagButton}>
         <Image
@@ -35,22 +37,22 @@ const SignUpScreen = () => {
         />
       </TouchableOpacity> */}
       <TouchableOpacity>
-        <Text style={commonStyles.subButton}>Already have an account? Login here!</Text>
+        <Text style={commonStyles.subButton}>{t('haveAccount')}</Text>
       </TouchableOpacity>
 
-      <TextInput
+      <TextInput 
         style={commonStyles.input}
-        placeholder="Your name"
+        placeholder={t('name')}
       />
 
       <TextInput
         style={commonStyles.input}
-        placeholder="Email address"
+        placeholder='Email'
         keyboardType="email-address"
       />
       <TextInput
         style={commonStyles.input}
-        placeholder="Phone number"
+        placeholder={t('phoneNumber')}
         keyboardType="numeric"
       />
 
@@ -59,12 +61,12 @@ const SignUpScreen = () => {
         placeholder="Password"
         secureTextEntry
       /> */}
-      <PasswordInput placeholder={"Password"} onPasswordChange={handlePasswordChange} />
-      <PasswordInput placeholder={"Confirm password"} onPasswordChange={handleConfirmPasswordChange} />
+      <PasswordInput placeholder={t('password')} onPasswordChange={handlePasswordChange} />
+      <PasswordInput placeholder={t('confirmPassword')} onPasswordChange={handleConfirmPasswordChange} />
 
       <View style={commonStyles.mainButtonContainer}>
       <TouchableOpacity onPress={handleSignUp} style={commonStyles.mainButton}>
-          <Text style={commonStyles.textMainButton}>CREATE ACCOUNT</Text>
+          <Text style={commonStyles.textMainButton}>{t('createButton')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -93,7 +95,7 @@ const SignUpScreen = () => {
           />
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

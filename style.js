@@ -3,8 +3,14 @@ import { StyleSheet } from 'react-native';
 export const commonStyles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    // padding: 16,
     paddingTop: 0,
+    backgroundColor: '#FDFBF6',
+  },
+  containerContent: {
+    flex: 1,
+    padding: 16,
+    paddingTop: 10,
     backgroundColor: '#FDFBF6',
   },
   titleText: {
@@ -33,10 +39,11 @@ export const commonStyles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
     backgroundColor: '#fff',
+    
   },
   subButton: {
     textAlign: 'center',
-    color: '#99BED7',
+    color: '#222',
     marginBottom: 20,
   },
   mainButtonContainer:{

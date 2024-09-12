@@ -31,7 +31,7 @@ const tokenCache = {
 export default function RootLayout() {
   const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
-  useFonts({
+  const [loaded] = useFonts({
     "open-sans": require("./../assets/fonts/OpenSans-Regular.ttf"),
     "open-sans-bold": require("./../assets/fonts/OpenSans-Bold.ttf"),
     "open-sans-medium": require("./../assets/fonts/OpenSans-Medium.ttf"),
@@ -39,6 +39,10 @@ export default function RootLayout() {
     "nunito-bold": require("./../assets/fonts/Nunito-Bold.ttf"),
     "nunito-medium": require("./../assets/fonts/Nunito-Medium.ttf"),
   });
+
+  if (!loaded) {
+    return null; 
+  }
 
   return (
     <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
@@ -89,7 +93,7 @@ export default function RootLayout() {
         <Stack.Screen
           name="screen/verify"
           options={{
-            title: 'Verify Account',
+            headerShown:false
           }}
         />
         <Stack.Screen
@@ -101,13 +105,19 @@ export default function RootLayout() {
         <Stack.Screen
           name="screen/settings"
           options={{
-            title: 'Settings',
+            headerShown:false
           }}
         />
         <Stack.Screen
           name="screen/profile"
           options={{
-            title: 'Profile',
+            headerShown:false
+          }}
+        />
+        <Stack.Screen
+          name="screen/changePassword"
+          options={{
+            headerShown:false
           }}
         />
         <Stack.Screen
