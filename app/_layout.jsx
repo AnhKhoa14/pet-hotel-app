@@ -110,6 +110,12 @@ export default function RootLayout() {
             title: 'Profile',
           }}
         />
+        <Stack.Screen
+          name="screen/message"
+          options={{
+            title: "Messages",
+          }}
+        />
       </Stack>
     </ClerkProvider>
   );
