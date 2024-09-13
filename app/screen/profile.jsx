@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet,ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { commonStyles } from '../../style';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,12 +9,13 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import Header from './../../components/Header/header'
 import i18n from '../../i18n';
 import { useTranslation } from 'react-i18next';
+import * as ImagePicker from 'expo-image-picker';
 
 const ProfileScreen = () => {
   const { t, i18n } = useTranslation();
   const router = useRouter();
   const [selectedValue, setSelectedValue] = useState("Male");
-  const [imageUri, setImageUri] = useState('https://scontent.fsgn5-9.fna.fbcdn.net/v/t39.30808-6/311824737_1495209727617286_3718553063051384848_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=a5f93a&_nc_eui2=AeE97AxuYq3JAOWLebv3D3hOXucbDwkAzrpe5xsPCQDOuiJgAe8xBtYtq8CL699oq2FXWLMTpyJ-lj_whaICUiOO&_nc_ohc=Bsb-nNxAlu0Q7kNvgHmFZW8&_nc_ht=scontent.fsgn5-9.fna&_nc_gid=AfKS57AbZp8t4OQmd56ihkw&oh=00_AYCxsUCDhsezeLSvnbzI9hY5GpDPeFa-Yx5CWqoiUcq92A&oe=66E6ED02');
+  const [imageUri, setImageUri] = useState(null);
 
   const handleUpdate = () => {
     // router.push('/');
@@ -55,17 +56,57 @@ const ProfileScreen = () => {
     setShow(true);
   }
 
+
+  const requestPermission = async ()=> {
+    try {
+      console.log('pressed');
+
+      // const checkPermission = 
+      const result=
+      await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      setImageUri(result.assets[0].uri);
+
+    } catch (error) {
+      console.log('Error requesting permission:', error);
+    }
+  }
+
   return (
     <SafeAreaView style={commonStyles.container}>
       <Header title={t('profile')}/>
-    <View style={commonStyles.containerContent}>
+    <ScrollView style={commonStyles.containerContent}>
       <View style={styles.uploadGroup}>
-        {imageUri && (
-          <Image
-            source={{ uri: imageUri }}
-            style={{ width: 120, height: 120, margin: 20, borderRadius: 75 }}
-          />
-        )}
+      <TouchableOpacity onPress={requestPermission} style={{margin:20}}>
+          {imageUri && (
+            <Image
+              source={{ uri: imageUri }}
+              style={{ width: 150, height: 150, marginBottom: 10, borderRadius: 75 }}
+            />
+            
+          )}
+          </TouchableOpacity>
+          {/* {imageUri && (
+            <Image
+              source={{ uri: imageUri }}
+              style={{ width: 150, height: 150, marginBottom: 10, borderRadius: 75 }}
+            />
+            
+          )} */}
+          {!imageUri&& (
+            <TouchableOpacity onPress={requestPermission} style={{ margin: 20 }}>
+            <Image
+              source={
+                require('./../../assets/images/icons8-camera-50.png')
+              }
+            />
+          </TouchableOpacity>
+          )}
 
         {/* <TouchableOpacity onPress={selectImage} style={{ backgroundColor: '#BEF0FF', padding: 5, marginBottom: 20, borderRadius: 10, color: '#fff' }}>
           <Text style={{ color: '#fff' }}>Upload Image</Text>
@@ -129,11 +170,11 @@ const ProfileScreen = () => {
         />
       )}
       <View style={commonStyles.mainButtonContainer}>
-        <TouchableOpacity onPress={handleUpdate} style={commonStyles.mainButton}>
-          <Text style={commonStyles.textMainButton}>{t('update')}</Text>
+        <TouchableOpacity onPress={handleUpdate} style={[commonStyles.mainButton,style={marginBottom:100}]}>
+          <Text style={commonStyles.textMainButton }>{t('update')}</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
     </SafeAreaView>
   );
 };
