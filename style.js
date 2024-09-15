@@ -91,4 +91,23 @@ export const commonStyles = StyleSheet.create({
   socialButtonText: {
     marginLeft: 10,
   },
+  searchContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#F2F2F2',
+    borderRadius: 25,
+    margin: 10,
+    paddingHorizontal: 15,
+    alignItems: 'center',
+  },
+  searchIcon: {
+    color: 'gray',
+    fontSize: 20,
+    marginRight: 10,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    paddingVertical: 10,
+    color: '#000',
+  },
 });
