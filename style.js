@@ -12,6 +12,7 @@ export const commonStyles = StyleSheet.create({
     padding: 16,
     paddingTop: 10,
     backgroundColor: '#FDFBF6',
+    // marginHorizontal:20,
   },
   titleText: {
     fontFamily:'nunito-bold',
