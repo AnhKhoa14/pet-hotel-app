@@ -4,8 +4,6 @@ import MessageScreen from '../../components/Message/messages'
 
 export default function message() {
   return (
-    <View>
       <MessageScreen />
-    </View>
   )
 }

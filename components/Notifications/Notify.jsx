@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native"; // For navigation
 import { commonStyles } from "../../style/";
 import { router } from "expo-router";
+import Header from "../Header/header";
 
 // Sample data for the notifications
 const notifications = [
@@ -79,7 +80,7 @@ const Notify = () => {
 
   return (
     <SafeAreaView style={commonStyles.container}>
-      <View style={styles.notificationContainer}>
+      {/* <View style={styles.notificationContainer}>
         <Text
           style={{
             fontFamily: "nunito-bold",
@@ -92,17 +93,15 @@ const Notify = () => {
           }}
         >
           Notifications
-        </Text>
-
-        {/* Button to navigate to the message page */}
-        <TouchableOpacity
+        </Text>       
+      </View> */}
+      <Header title="Notifications" />
+      <TouchableOpacity
           style={styles.messageButton}
           onPress={() => navigation.navigate("screen/message")} // Update navigation path
         >
           <Text style={styles.messageButtonText}>Go to Messages</Text>
         </TouchableOpacity>
-      </View>
-
       <FlatList
         data={notifications}
         keyExtractor={(item) => item.id}
