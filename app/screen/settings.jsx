@@ -13,6 +13,9 @@ const SettingsScreen = () => {
   const handleProfile =() => {
     router.push('/screen/profile');
   }
+  const handlePet =() => {
+    router.push('/screen/evaluate');
+  }
   const handleChangePassword =()=>{
     router.push('screen/changePassword');
   }
@@ -34,7 +37,7 @@ const SettingsScreen = () => {
           <Text style={styles.arrow}>›</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity  style={styles.item}>
+        <TouchableOpacity onPress={handlePet} style={styles.item}>
           <Text style={styles.itemText}>{t('petManagement')}</Text>
           <Text style={styles.arrow}>›</Text>
         </TouchableOpacity>

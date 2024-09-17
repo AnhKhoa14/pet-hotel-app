@@ -42,5 +42,7 @@
     "confirmNewPassword":"Nhập lại mật khẩu mới",
     "verifyCode":"Mã xác minh",
     "update":"Cập nhật",
-    "updateSuccess":"Chỉnh sửa thành công"
+    "updateSuccess":"Chỉnh sửa thành công",
+    "submitReview":"Viết đánh giá"
+
 }
