@@ -150,6 +150,18 @@ export default function RootLayout() {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="screen/evaluate"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="screen/createEvaluate"
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack>
     </ClerkProvider>
   );

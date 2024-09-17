@@ -42,5 +42,6 @@
     "confirmNewPassword":"Confirm new password",
     "verifyCode":"Verify code",
     "update":"Update",
-    "updateSuccess":"Update success"
+    "updateSuccess":"Update success",
+    "submitReview":"Submit review"
 }

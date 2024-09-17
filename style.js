@@ -6,6 +6,7 @@ export const commonStyles = StyleSheet.create({
     // padding: 16,
     paddingTop: 0,
     backgroundColor: '#FDFBF6',
+    // fontFamily:'nunito-medium',
   },
   containerContent: {
     flex: 1,
@@ -13,6 +14,8 @@ export const commonStyles = StyleSheet.create({
     paddingTop: 10,
     backgroundColor: '#FDFBF6',
     // marginHorizontal:20,
+    fontFamily:'nunito-medium',
+
   },
   titleText: {
     fontFamily:'nunito-bold',
