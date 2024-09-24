@@ -18,6 +18,11 @@ const LoginScreen = () => {
   if (!i18n) {
     console.log('cc');
   }
+
+  const handleForgot = () => {
+    router.push('/screen/forgotPassword');
+  }
+
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
   };
@@ -50,7 +55,7 @@ const LoginScreen = () => {
       />
       <PasswordInput placeholder={"Password"} onPasswordChange={handlePasswordChange} />
 
-      <TouchableOpacity>
+      <TouchableOpacity onPress={handleForgot}>
         <Text style={commonStyles.subButton}>Forgot password?</Text>
       </TouchableOpacity>
 
