@@ -10,9 +10,11 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../../i18n';
 import ToggleFlag from '../ToggleButtonLanguage/ToggleButton';
 import BASE from '../../config/AXIOS_BASE';
+import { useNavigation } from '@react-navigation/native';
 
 const LoginScreen = () => {
   const router = useRouter();
+  const navigation = useNavigation();
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
   const { t, i18n } = useTranslation();
@@ -44,6 +46,36 @@ const LoginScreen = () => {
     }
   };
 
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+  
+  const handleForgotPassword = async () => {
+    if (!usernameOrEmail) {
+      Alert.alert(t('Error'), t('Please enter your email.'));
+      return;
+    }
+  
+    if (!isValidEmail(usernameOrEmail)) {
+      Alert.alert(t('Error'), t('Please enter a valid email address.'));
+      return;
+    }
+  
+    try {
+      const response = await BASE.post(`/forgot-password?email=${usernameOrEmail}`);
+      if (response.status === 200) {
+        console.log('Password reset email sent');
+        Alert.alert(t('Success'), t('Password reset email sent'));
+        router.push({ pathname: '/screen/forgotPassword', params: { email: usernameOrEmail } });
+      }
+    } catch (error) {
+      console.error('Password reset failed:', error.message);
+      Alert.alert(t('Error'), t('Password reset failed. Please try again.'));
+    }
+  };
+  
+
   return (
     <SafeAreaView style={commonStyles.containerContent}>
       <StatusBar barStyle="dark-content" />
@@ -61,7 +93,7 @@ const LoginScreen = () => {
       />
       <PasswordInput placeholder="Password" onPasswordChange={handlePasswordChange} />
 
-      <TouchableOpacity>
+      <TouchableOpacity onPress={handleForgotPassword}>
         <Text style={commonStyles.subButton}>Forgot password?</Text>
       </TouchableOpacity>
 
