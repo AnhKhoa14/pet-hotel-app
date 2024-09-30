@@ -162,18 +162,7 @@ export default function RootLayout() {
             headerShown: false,
           }}
         />
-        <Stack.Screen
-          name="screen/forgotPassword"
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="screen/verifyForgot"
-          options={{
-            headerShown: false,
-          }}
-        />
+        
       </Stack>
     </ClerkProvider>
   );
