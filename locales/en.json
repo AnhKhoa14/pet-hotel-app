@@ -43,5 +43,9 @@
     "verifyCode":"Verify code",
     "update":"Update",
     "updateSuccess":"Update success",
-    "submitReview":"Submit review"
+    "submitReview":"Submit review",
+    "token": "Token",
+    "forgotPassword" : "Forgot password",
+    "resetPassword" : "Reset password",
+    "service" : "Service"
 }

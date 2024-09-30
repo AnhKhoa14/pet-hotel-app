@@ -10,9 +10,12 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../../i18n';
 import ToggleFlag from '../ToggleButtonLanguage/ToggleButton';
 import BASE from '../../config/AXIOS_BASE';
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = () => {
   const router = useRouter();
+  const navigation = useNavigation();
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
   const { t, i18n } = useTranslation();
@@ -36,6 +39,7 @@ const LoginScreen = () => {
       if (response.status === 200) {
         const token = response.data.access_token;
         console.log('Login successful, token:', token);
+        await AsyncStorage.setItem('token', token);
 
         router.push('/home');
       }
@@ -47,6 +51,14 @@ const LoginScreen = () => {
       Alert.alert('Login Failed', 'Invalid email or password. Please try again.');
     }
   };
+
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+  
+  
+  
 
   return (
     <SafeAreaView style={commonStyles.containerContent}>
@@ -65,7 +77,7 @@ const LoginScreen = () => {
       />
       <PasswordInput placeholder="Password" onPasswordChange={handlePasswordChange} />
 
-      <TouchableOpacity onPress={handleForgot}>
+      <TouchableOpacity onPress={() => navigation.navigate("screen/forgotPassword")}>
         <Text style={commonStyles.subButton}>Forgot password?</Text>
       </TouchableOpacity>
 
