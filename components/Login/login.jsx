@@ -11,6 +11,7 @@ import i18n from '../../i18n';
 import ToggleFlag from '../ToggleButtonLanguage/ToggleButton';
 import BASE from '../../config/AXIOS_BASE';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = () => {
   const router = useRouter();
@@ -34,6 +35,7 @@ const LoginScreen = () => {
       if (response.status === 200) {
         const token = response.data.access_token;
         console.log('Login successful, token:', token);
+        await AsyncStorage.setItem('token', token);
 
         router.push('/home');
       }
@@ -51,29 +53,7 @@ const LoginScreen = () => {
     return emailRegex.test(email);
   };
   
-  const handleForgotPassword = async () => {
-    if (!usernameOrEmail) {
-      Alert.alert(t('Error'), t('Please enter your email.'));
-      return;
-    }
   
-    if (!isValidEmail(usernameOrEmail)) {
-      Alert.alert(t('Error'), t('Please enter a valid email address.'));
-      return;
-    }
-  
-    try {
-      const response = await BASE.post(`/forgot-password?email=${usernameOrEmail}`);
-      if (response.status === 200) {
-        console.log('Password reset email sent');
-        Alert.alert(t('Success'), t('Password reset email sent'));
-        router.push({ pathname: '/screen/forgotPassword', params: { email: usernameOrEmail } });
-      }
-    } catch (error) {
-      console.error('Password reset failed:', error.message);
-      Alert.alert(t('Error'), t('Password reset failed. Please try again.'));
-    }
-  };
   
 
   return (
@@ -93,7 +73,7 @@ const LoginScreen = () => {
       />
       <PasswordInput placeholder="Password" onPasswordChange={handlePasswordChange} />
 
-      <TouchableOpacity onPress={handleForgotPassword}>
+      <TouchableOpacity onPress={() => navigation.navigate("screen/forgotPassword")}>
         <Text style={commonStyles.subButton}>Forgot password?</Text>
       </TouchableOpacity>
 

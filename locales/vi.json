@@ -45,5 +45,7 @@
     "updateSuccess":"Chỉnh sửa thành công",
     "submitReview":"Viết đánh giá",
     "token": "Token",
-    "forgotPassword" : "Quên mật khẩu"
+    "forgotPassword" : "Quên mật khẩu",
+    "resetPassword" : "Đặt lại mật khẩu",
+    "service" : "Dịch vụ"
 }

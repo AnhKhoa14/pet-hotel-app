@@ -127,6 +127,12 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
+          name="screen/resetPassword"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
           name="screen/message"
           options={{
             headerShown: false,
@@ -146,6 +152,12 @@ export default function RootLayout() {
         />
         <Stack.Screen
           name="screen/chat"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="screen/notifications"
           options={{
             headerShown: false,
           }}
