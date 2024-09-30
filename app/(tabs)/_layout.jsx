@@ -3,7 +3,8 @@ import React from 'react'
 import { Tabs } from 'expo-router'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 export default function TabLayout() {
   return (
@@ -15,13 +16,6 @@ export default function TabLayout() {
             tabBarIcon: ({color}) => <Ionicons name="home" size={24} color={color}/>
         }} 
         />
-        <Tabs.Screen name='search'
-        options={{
-            title: 'Search',
-            headerShown: false,
-            tabBarIcon: ({color}) => <Ionicons name="search" size={24} color={color} />
-        }} 
-        />
         <Tabs.Screen name='pets' 
         options={{
             title: 'Pets',
@@ -29,18 +23,25 @@ export default function TabLayout() {
             tabBarIcon: ({color}) => <MaterialIcons name="pets" size={24} color={color} />
         }} 
         />
-        <Tabs.Screen name='details'
+        <Tabs.Screen name='calendar' 
         options={{
-            title: 'Details',
+            title: 'Calendar',
             headerShown: false,
-            tabBarIcon: ({color}) => <MaterialIcons name="assignment" size={24} color={color} />
+            tabBarIcon: ({color}) => <FontAwesome name="calendar" size={24} color={color} />
         }} 
         />
-        <Tabs.Screen name='notifications'
+        <Tabs.Screen name='chat'
         options={{
-            title: 'Notifications',
+            title: 'Chat',
             headerShown: false,
-            tabBarIcon: ({color}) => <Ionicons name="notifications" size={24} color={color} />
+            tabBarIcon: ({color}) => <Ionicons name="chatbubble-ellipses-outline" size={24} color={color} />
+        }} 
+        />
+        <Tabs.Screen name='user'
+        options={{
+            title: 'User',
+            headerShown: false,
+            tabBarIcon: ({color}) => <FontAwesome5 name="user" size={24} color={color} />
         }} 
         />
     </Tabs>

@@ -1,65 +1,52 @@
 import React, { useState } from "react";
 import {
-  View,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
+  View,
   Alert,
 } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
+import BASE from "../../config/AXIOS_BASE";
+import { t } from "i18next";
+import Header from "../../components/Header/header";
 import { commonStyles } from "../../style";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTranslation } from "react-i18next";
-import { PasswordInput } from "../../components/PasswordInput/passwordInput";
-import Header from "./../../components/Header/header";
-import BASE from "../../config/AXIOS_BASE";
 
 const ForgotPasswordScreen = () => {
+  const [email, setEmail] = useState("");
   const router = useRouter();
-  const { t } = useTranslation();
-  const { email } = useLocalSearchParams();
-  const [token, setToken] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handlePasswordChange = (value) => {
-    setPassword(value);
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
 
-  const handleConfirmPasswordChange = (value) => {
-    setConfirmPassword(value);
-  };
-
-  const handleUpdate = async () => {
-    // Validate fields
-    if (!token || !password || !confirmPassword) {
-      Alert.alert(t("Error"), t("Please fill in all fields."));
+  const handleForgotPassword = async () => {
+    if (!email.trim()) {
+      Alert.alert(t("Error"), t("Please enter your email."));
       return;
     }
 
-    // Validate password match
-    if (password !== confirmPassword) {
-      Alert.alert(t("Error"), t("Passwords do not match."));
+    if (!isValidEmail(email)) {
+      Alert.alert(t("Error"), t("Please enter a valid email address."));
       return;
     }
-
-    const newPasswordRequest = {
-      email: email,
-      newPassword: password,
-      token: token,
-    };
 
     try {
-      const response = await BASE.post(`/reset-password`, newPasswordRequest);
+      const response = await BASE.post(`/forgot-password?email=${email}`);
       if (response.status === 200) {
-        console.log("Password updated successfully");
-        Alert.alert(t("Success"), t("Password updated successfully!"));
-        router.push("screen/login");
+        console.log("Password reset email sent");
+        Alert.alert(t("Success"), t("Password reset email sent"));
+        router.push({
+          pathname: "/screen/resetPassword",
+          params: { email: email },
+        });
       }
     } catch (error) {
-      console.error("Password update failed:", error.message);
-      Alert.alert(t("Error"), t("Password update failed. Please try again."));
+      console.error("Password reset failed:", error.message);
+      Alert.alert(t("Error"), t("Password reset failed. Please try again."));
     }
   };
 
@@ -67,45 +54,28 @@ const ForgotPasswordScreen = () => {
     <SafeAreaView style={commonStyles.container}>
       <Header title={t("forgotPassword")} />
       <View style={commonStyles.containerContent}>
-        <Text style={[styles.header, { paddingTop: 20, marginHorizontal: 'auto' }]}>Email: {email}</Text>
-        <Text style={[styles.header]}>{t("token")}</Text>
+        {/* <View style={commonStyles.innerContainer}> */}
+        <Text style={commonStyles.text}>
+          Please input your mail to reset the password:{" "}
+        </Text>
         <TextInput
+          placeholder="Email"
           style={commonStyles.input}
-          placeholder="Token"
-          value={token}
-          onChangeText={setToken} // Bind input to token state
+          value={email}
+          onChangeText={setEmail}
         />
-        <Text style={styles.header}>{t("newPassword")}</Text>
-        <PasswordInput
-          placeholder={"Password"}
-          onPasswordChange={handlePasswordChange}
-        />
-        <Text style={styles.header}>{t("confirmNewPassword")}</Text>
-        <PasswordInput
-          placeholder={"Password"}
-          onPasswordChange={handleConfirmPasswordChange}
-        />
-
         <View style={commonStyles.mainButtonContainer}>
           <TouchableOpacity
-            onPress={handleUpdate}
+            onPress={handleForgotPassword}
             style={commonStyles.mainButton}
           >
-            <Text style={commonStyles.textMainButton}>{t("update")}</Text>
+            <Text style={commonStyles.textMainButton}>Reset Password</Text>
           </TouchableOpacity>
         </View>
+        {/* </View> */}
       </View>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  header: {
-    fontFamily: "nunito-medium",
-    color: "#4EA0B7",
-    fontSize: 17,
-    paddingBottom: 5,
-  },
-});
 
 export default ForgotPasswordScreen;

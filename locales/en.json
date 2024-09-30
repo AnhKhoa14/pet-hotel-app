@@ -45,5 +45,7 @@
     "updateSuccess":"Update success",
     "submitReview":"Submit review",
     "token": "Token",
-    "forgotPassword" : "Forgot password"
+    "forgotPassword" : "Forgot password",
+    "resetPassword" : "Reset password",
+    "service" : "Service"
 }
