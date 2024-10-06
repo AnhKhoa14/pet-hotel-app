@@ -21,8 +21,12 @@ const LoginScreen = () => {
   const { t, i18n } = useTranslation();
 
   const handlePasswordChange = (value) => {
-    setPassword(value);
+    setPassword(value); 
   };
+  
+  const handleForgot = () => {
+    // router.push('/screen/forgotPassword'); 
+  }
 
   const handleLogin = async () => {
     const loginPayload = {

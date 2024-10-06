@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const config = {
-    baseURL: "http://192.168.1.2:8080/no-auth",
+    baseURL: "http://192.100.10:8080/no-auth",
     header: {
         "Content-Type": "application/json",
     }
