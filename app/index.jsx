@@ -14,7 +14,7 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text>Welcome cc {user?.fullName}</Text>
+      <Text>Welcome {user?.fullName}</Text>
       {user?
       <Redirect href={'/(tabs)/home'} /> :
       <Redirect href={'/login'} />

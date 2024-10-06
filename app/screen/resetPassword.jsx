@@ -70,7 +70,9 @@ const ResetPasswordScreen = () => {
         <Text style={[styles.header, { paddingTop: 20 }]}>{t("token")}</Text>
         <TextInput
           style={commonStyles.input}
-          placeholder="Token"
+          placeholder="Verify code"
+          keyboardType="numeric"
+          placeholderTextColor={'#8BBCE5'}
           value={token}
           onChangeText={setToken}
         />
@@ -81,7 +83,7 @@ const ResetPasswordScreen = () => {
         />
         <Text style={styles.header}>{t("confirmNewPassword")}</Text>
         <PasswordInput
-          placeholder={"Password"}
+          placeholder={"Confirm password"}
           onPasswordChange={handleConfirmPasswordChange}
         />
 

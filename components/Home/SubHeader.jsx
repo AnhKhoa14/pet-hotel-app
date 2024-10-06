@@ -1,13 +1,19 @@
 import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "expo-router";
 
 const SubHeader = () => {
   const { t } = useTranslation();
+  const router = useRouter();
 
   const handleJoinNow = () => {
     console.log("Join Now clicked!");
   };
+
+  const handleBooking = () => {
+    router.push('/screen/details');
+  }
 
   return (
     <View style={styles.subHeaderContainer}>
@@ -30,7 +36,7 @@ const SubHeader = () => {
       </View>
 
       <View style={styles.servicesContainer}>
-        <ServiceButton title="Khách sạn" />
+        <ServiceButton onPress={handleBooking} title="Khách sạn" />
         <ServiceButton title="Spa & Grooming" />
         <ServiceButton title="Thú y" />
         <ServiceButton title="Tiêm ngừa" />
@@ -39,9 +45,9 @@ const SubHeader = () => {
   );
 };
 
-const ServiceButton = ({ title }) => {
+const ServiceButton = ({ title, onPress }) => {
   return (
-    <TouchableOpacity style={styles.serviceButton}>
+    <TouchableOpacity style={styles.serviceButton} onPress={onPress}>
       <View style={styles.serviceIcon} />
       <Text style={styles.serviceText}>{title}</Text>
     </TouchableOpacity>
