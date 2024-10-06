@@ -12,7 +12,8 @@ export const commonStyles = StyleSheet.create({
     flex: 1,
     padding: 16,
     paddingTop: 10,
-    backgroundColor: '#FDFBF6',
+    // backgroundColor: '#FDFBF6',
+    backgroundColor: '#EDF8FD',
     // marginHorizontal:20,
     fontFamily:'nunito-medium',
 
@@ -20,10 +21,11 @@ export const commonStyles = StyleSheet.create({
   titleText: {
     fontFamily:'nunito-bold',
     fontSize: 28,
-    color: '#4EA0B7',
+    // color: '#4EA0B7',
+    color: '#416FAE',
     textAlign: 'center',
-    marginBottom: 50,
-    fontWeight: "500",
+    marginBottom: 30,
+    fontWeight: "bold",
   },
   flagButton: {
     position: 'absolute',
@@ -42,12 +44,14 @@ export const commonStyles = StyleSheet.create({
     marginBottom: 15,
     paddingLeft: 20,
     paddingRight: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#EEF7FD',
+    borderWidth:2,
+    borderColor:'#416FAE'
     
   },
   subButton: {
     textAlign: 'center',
-    color: '#222',
+    color: '#416FAE',
     marginBottom: 20,
   },
   mainButtonContainer:{
@@ -62,17 +66,18 @@ export const commonStyles = StyleSheet.create({
   },
   mainButton: {
     backgroundColor: '#4EA0B7',
+    // backgroundColor:'#416FAE',
     borderRadius: 50,
     height: 45,
     padding:10,
-    fontSize:14,
+    fontSize:18,
     width:'60%',
     textAlign: 'center',
     marginBottom:10,
   },
   textMainButton:{
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: 18,
     color: '#fff',
     fontFamily: 'nunito-bold',
   },
@@ -83,13 +88,16 @@ export const commonStyles = StyleSheet.create({
   },
   googleButton: {
     // backgroundColor: '#F4E0BB',
-    borderRadius: 8,
+    borderRadius: 30,
+    // padding:'5px 5px',
     height: 50,
+    borderWidth:1,
+    borderColor:'#416FAE'
   },
   facebookButton: {
     // backgroundColor: '#4681C9',
     borderRadius: 8,
-    height: 50,
+    // height: 50,
   },
   socialButtonText: {
     marginLeft: 10,

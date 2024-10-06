@@ -94,21 +94,33 @@ const SignUpScreen = () => {
   return (
     <View style={commonStyles.containerContent}>
       <StatusBar barStyle="dark-content" />
+      <View style={{ width: '100%', alignItems: 'center' }}>
+      <Image
+          source={require('./../../assets/images/logo.png')}
+          style={{ width:150, height:150}}
+          resizeMode="contain" 
+        />
+      </View>
+      <Text style={commonStyles.titleText}>{t('welcome')}</Text>
+
       <TextInput
         style={commonStyles.input}
         placeholder="Username"
+        placeholderTextColor={'#8BBCE5'}
         value={username}
         onChangeText={setUsername}
       />
       <TextInput
         style={commonStyles.input}
         placeholder={t("name")}
+        placeholderTextColor={'#8BBCE5'}
         value={fullName}
         onChangeText={setFullName}
       />
       <TextInput
         style={commonStyles.input}
         placeholder="Email"
+        placeholderTextColor={'#8BBCE5'}
         keyboardType="email-address"
         value={email}
         onChangeText={setEmail}
@@ -116,6 +128,7 @@ const SignUpScreen = () => {
       <TextInput
         style={commonStyles.input}
         placeholder={t("phoneNumber")}
+        placeholderTextColor={'#8BBCE5'}
         keyboardType="numeric"
         value={phone}
         onChangeText={setPhone}
@@ -133,14 +146,14 @@ const SignUpScreen = () => {
           <Text style={commonStyles.textMainButton}>{t("createButton")}</Text>
         </TouchableOpacity>
       </View>
-      <Text style={commonStyles.orText}>_____________________</Text>
+      <Text style={commonStyles.orText}>________________________________________</Text>
       <View style={commonStyles.buttonContainer}>
         <TouchableOpacity style={commonStyles.googleButton} onPress={() => {}}>
           <Image source={googleIcon} style={{ width: 50, height: 50 }} />
         </TouchableOpacity>
-        <TouchableOpacity style={commonStyles.facebookButton} onPress={() => {}}>
+        {/* <TouchableOpacity style={commonStyles.facebookButton} onPress={() => {}}>
           <Image source={facebookIcon} style={{ width: 50, height: 50 }} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );

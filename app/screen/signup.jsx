@@ -10,8 +10,8 @@ import i18n from '../../i18n';
 export default function SignUp() {
   const { t, i18n } = useTranslation();
   return (
-    <SafeAreaView style={commonStyles.container}> 
-    <Header title={t('signup')}/>
+    <SafeAreaView style={commonStyles.containerContent}> 
+    {/* <Header title={t('signup')}/> */}
     <SignUpScreen />
     </SafeAreaView>
   );

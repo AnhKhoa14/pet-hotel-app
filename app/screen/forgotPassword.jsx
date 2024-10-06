@@ -55,12 +55,14 @@ const ForgotPasswordScreen = () => {
       <Header title={t("forgotPassword")} />
       <View style={commonStyles.containerContent}>
         {/* <View style={commonStyles.innerContainer}> */}
-        <Text style={commonStyles.text}>
-          Please input your mail to reset the password:{" "}
+        <Text style={{color:'#416FAE', fontSize:17, textAlign:'center', margin:10}}>
+          Vui lòng nhập email đăng kí tài khoản
         </Text>
         <TextInput
           placeholder="Email"
+          keyboardType="email-address"
           style={commonStyles.input}
+          placeholderTextColor={'#8BBCE5'}
           value={email}
           onChangeText={setEmail}
         />

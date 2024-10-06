@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
   notificationContainer: {
     flexDirection: 'row',
     backgroundColor: "#4EA0B7",
+    // backgroundColor: "#416FAE",
     justifyContent: "space-between", 
     alignItems: "center", 
     borderBottomLeftRadius: 20, 

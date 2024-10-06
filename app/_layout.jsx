@@ -180,7 +180,30 @@ export default function RootLayout() {
             headerShown: false,
           }}
         />
-        
+        <Stack.Screen
+          name="screen/confirmBooking"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="screen/booking"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="screen/details"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="screen/bookingSuccess"
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack>
     </ClerkProvider>
   );

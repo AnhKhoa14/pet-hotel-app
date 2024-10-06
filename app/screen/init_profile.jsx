@@ -14,18 +14,18 @@ const InitProfileScreen = () => {
   const router = useRouter();
   const [imageUri, setImageUri] = useState(null);
   const { t, i18n } = useTranslation();
-  const requestPermission = async ()=> {
+  const requestPermission = async () => {
     try {
       console.log('pressed');
 
       // const checkPermission = 
-      const result=
-      await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
+      const result =
+        await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 1,
+        });
 
       setImageUri(result.assets[0].uri);
       // PermissionsAndroid.request(
@@ -50,7 +50,7 @@ const InitProfileScreen = () => {
       console.log('Error requesting permission:', error);
     }
   }
-  
+
   // const selectImage = () => {
   //   launchImageLibrary(
   //     {
@@ -80,16 +80,16 @@ const InitProfileScreen = () => {
   return (
     <SafeAreaView style={commonStyles.container}>
       <Header title={t('addPet')} />
-      <ScrollView  style={commonStyles.containerContent}>
+      <ScrollView style={commonStyles.containerContent}>
         <View style={styles.uploadGroup}>
-          <TouchableOpacity onPress={requestPermission} style={{margin:20}}>
-          {imageUri && (
-            <Image
-              source={{ uri: imageUri }}
-              style={{ width: 150, height: 150, marginBottom: 10, borderRadius: 75 }}
-            />
-            
-          )}
+          <TouchableOpacity onPress={requestPermission} style={{ margin: 20 }}>
+            {imageUri && (
+              <Image
+                source={{ uri: imageUri }}
+                style={{ width: 150, height: 150, marginBottom: 10, borderRadius: 75 }}
+              />
+
+            )}
           </TouchableOpacity>
           {/* {imageUri && (
             <Image
@@ -98,16 +98,16 @@ const InitProfileScreen = () => {
             />
             
           )} */}
-          {!imageUri&& (
+          {!imageUri && (
             <TouchableOpacity onPress={requestPermission} style={{ margin: 20 }}>
-            <Image
-              source={
-                require('./../../assets/images/icons8-camera-50.png')
-              }
-            />
-          </TouchableOpacity>
+              <Image
+                source={
+                  require('./../../assets/images/icons8-camera-50.png')
+                }
+              />
+            </TouchableOpacity>
           )}
-          
+
         </View>
         <Text style={styles.header}>
           {t('petName')}
@@ -169,7 +169,7 @@ const InitProfileScreen = () => {
           keyboardType='numeric'
         />
 
-<Text style={styles.header}>
+        <Text style={styles.header}>
           {t('notes')}
         </Text>
         <TextInput
@@ -181,7 +181,7 @@ const InitProfileScreen = () => {
             paddingLeft: 20,
             paddingRight: 20,
             paddingTop: 10,
-            paddingBottom:10,
+            paddingBottom: 10,
             marginBottom: 15,
             backgroundColor: '#fff',
             textAlignVertical: 'top',
@@ -199,7 +199,7 @@ const InitProfileScreen = () => {
         </View>
 
         <TouchableOpacity onPress={handleSkip}>
-          <Text style={[commonStyles.subButton, style={marginBottom:100}]}>Skip here!</Text>
+          <Text style={[commonStyles.subButton, style = { marginBottom: 100 }]}>Skip here!</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

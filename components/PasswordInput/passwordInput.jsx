@@ -16,6 +16,7 @@ export const PasswordInput = ({placeholder, onPasswordChange}) => {
         style={commonStyles.input}
         placeholder={placeholder}
         secureTextEntry={!passwordVisible} 
+        placeholderTextColor={'#8BBCE5'}
         value={password}             
         onChangeText={handlePasswordChange}
       />
@@ -30,7 +31,7 @@ export const PasswordInput = ({placeholder, onPasswordChange}) => {
         <Ionicons
           name={passwordVisible ? 'eye-off' : 'eye'} 
           size={24}
-          color="gray"
+          color="#416FAE"
         />
       </TouchableOpacity>
     </View>

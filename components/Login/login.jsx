@@ -35,14 +35,14 @@ const LoginScreen = () => {
     };
 
     try {
-      const response = await BASE.post('/login', loginPayload);
-      if (response.status === 200) {
-        const token = response.data.access_token;
-        console.log('Login successful, token:', token);
-        await AsyncStorage.setItem('token', token);
+      // const response = await BASE.post('/login', loginPayload);
+      // if (response.status === 200) {
+      //   const token = response.data.access_token;
+      //   console.log('Login successful, token:', token);
+      //   await AsyncStorage.setItem('token', token);
 
         router.push('/home');
-      }
+      // }
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
       console.error('Login failed:', errorMessage);
@@ -63,6 +63,14 @@ const LoginScreen = () => {
   return (
     <SafeAreaView style={commonStyles.containerContent}>
       <StatusBar barStyle="dark-content" />
+      <View style={{ width: '100%', alignItems: 'center' }}>
+      <Image
+          source={require('./../../assets/images/logo.png')}
+          style={{ width:200, height:200}}
+          resizeMode="contain" 
+        />
+      </View>
+     
       <Text style={commonStyles.titleText}>{t('welcome')}</Text>
 
       <View style={{ alignItems: 'flex-end', marginBottom: 20 }}>
@@ -70,33 +78,34 @@ const LoginScreen = () => {
       </View>
       <TextInput
         style={commonStyles.input}
-        placeholder="Email or username"
+        placeholder={t('username')}
         keyboardType="email-address"
+        placeholderTextColor={'#8BBCE5'}
         value={usernameOrEmail}
         onChangeText={setUsernameOrEmail}
       />
-      <PasswordInput placeholder="Password" onPasswordChange={handlePasswordChange} />
+      <PasswordInput placeholder={t('password')} onPasswordChange={handlePasswordChange} />
 
       <TouchableOpacity onPress={() => navigation.navigate("screen/forgotPassword")}>
-        <Text style={commonStyles.subButton}>Forgot password?</Text>
+        <Text style={[commonStyles.subButton,{textAlign:'right', marginRight:10}]}>{t('forgotPassword?')}</Text>
       </TouchableOpacity>
 
       <View style={commonStyles.mainButtonContainer}>
         <TouchableOpacity onPress={handleLogin} style={commonStyles.mainButton}>
-          <Text style={commonStyles.textMainButton}>LOGIN</Text>
+          <Text style={commonStyles.textMainButton}>{t('login')}</Text>
         </TouchableOpacity>
       </View>
 
-      <Text style={commonStyles.orText}>_____________________</Text>
+      <Text style={commonStyles.orText}>________________________________________</Text>
 
       <View style={commonStyles.buttonContainer}>
         <TouchableOpacity style={commonStyles.googleButton} onPress={() => {}}>
           <Image source={googleIcon} style={{ width: 50, height: 50 }} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={commonStyles.facebookButton} onPress={() => {}}>
+        {/* <TouchableOpacity style={commonStyles.facebookButton} onPress={() => {}}>
           <Image source={facebookIcon} style={{ width: 50, height: 50 }} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </SafeAreaView>
   );
