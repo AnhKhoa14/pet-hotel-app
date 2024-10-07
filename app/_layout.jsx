@@ -204,6 +204,12 @@ export default function RootLayout() {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="screen/pet"
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack>
     </ClerkProvider>
   );

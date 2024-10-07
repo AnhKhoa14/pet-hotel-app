@@ -14,7 +14,7 @@ const SettingsScreen = () => {
     router.push('/screen/profile');
   }
   const handlePet =() => {
-    router.push('/screen/evaluate');
+    router.push('/screen/pet');
   }
   const handleChangePassword =()=>{
     router.push('screen/changePassword');

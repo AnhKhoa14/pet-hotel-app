@@ -23,7 +23,7 @@ const BookingSuccess = () => {
                 </View>
                 <TouchableOpacity style={styles.view3}>
                     <Text style={styles.text5}>
-                        {"Chi tiết hóa đơn"}
+                        {"Tiến hành thanh toán"}5
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={{alignItems:'center'}}>
