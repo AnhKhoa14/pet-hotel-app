@@ -1,7 +1,12 @@
 import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Image, TextInput } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "expo-router";
+import BackgroundImange from './../../assets/images/background.png';
+import HomeIcon from './../../assets/images/home.png';
+import VaccineIcon from './../../assets/images/vaccine.png';
+import MedicalIcon from './../../assets/images/medical.png';
+import CutIcon from './../../assets/images/cut.png';
 
 const SubHeader = () => {
   const { t } = useTranslation();
@@ -20,15 +25,15 @@ const SubHeader = () => {
       {/* Rectangle with image background and overlay */}
       <View style={styles.rectangle}>
         <Image
-          source={require('../../assets/images/pets.jpeg')} // Add your image path here
+          source={BackgroundImange}
           style={styles.image}
         />
-        <View style={styles.overlayContainer}>
+        {/* <View style={styles.overlayContainer}>
           <Text style={styles.communityTitle}>Join The Community</Text>
           <TouchableOpacity onPress={handleJoinNow} style={styles.joinButton}>
             <Text style={styles.joinButtonText}>Join Now</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
 
       <View style={styles.serviceTitleContainer}>
@@ -36,19 +41,70 @@ const SubHeader = () => {
       </View>
 
       <View style={styles.servicesContainer}>
-        <ServiceButton onPress={handleBooking} title="Khách sạn" />
-        <ServiceButton title="Spa & Grooming" />
-        <ServiceButton title="Thú y" />
-        <ServiceButton title="Tiêm ngừa" />
+        <ServiceButton onPress={handleBooking} title="Khách sạn" icon={HomeIcon} />
+        <ServiceButton title="Spa & Grooming" icon={CutIcon} />
+        <ServiceButton title="Thú y" icon={MedicalIcon} />
+        <ServiceButton title="Tiêm ngừa" icon={VaccineIcon} />
+      </View>
+      <View style={styles.searchContainer}>
+        <TextInput
+          placeholder="Tìm kiếm cửa hàng"
+          style={styles.searchInput}
+        />
+      </View>
+      <View style={styles.serviceTitleContainer}>
+        <Text style={styles.serviceTitle}>{t("recommend", "Gợi ý")}</Text>
+      </View>
+      <View style={styles.shopSection}>
+        <View style={{ flex: 1, alignItems: 'center' }}>
+          <Image
+            source={{ uri: "https://i.imgur.com/1tMFzp8.png" }}
+            resizeMode={'stretch'}
+            imageStyle={styles.view3}
+            style={styles.view2}
+          />
+        </View>
+
+        <View style={styles.column}>
+          <View style={styles.row3}>
+            <View style={styles.view4}>
+              <Text style={styles.text3}>
+                {"10% Off"}
+              </Text>
+            </View>
+            <Text style={styles.text7}>
+              {"4.8"}
+            </Text>
+          </View>
+          <Text style={styles.text4}>
+            {"KATYB PET CARE"}
+          </Text>
+          <View style={styles.row4}>
+            <Image
+              source={{ uri: "https://i.imgur.com/1tMFzp8.png" }}
+              resizeMode={"stretch"}
+              style={styles.image6}
+            />
+            <Text style={styles.text5}>
+              {"Quận 9"}
+            </Text>
+          </View>
+          <Text style={styles.text6}>
+            {"150.000VND/Ngày"}
+          </Text>
+        </View>
+
       </View>
     </View>
   );
 };
 
-const ServiceButton = ({ title, onPress }) => {
+const ServiceButton = ({ title, onPress, icon }) => {
   return (
     <TouchableOpacity style={styles.serviceButton} onPress={onPress}>
-      <View style={styles.serviceIcon} />
+      <View style={styles.serviceIcon}>
+        <Image style={{ width: 40, height: 40 }} source={icon} />
+      </View>
       <Text style={styles.serviceText}>{title}</Text>
     </TouchableOpacity>
   );
@@ -71,6 +127,28 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     position: "relative", // Allows overlay positioning
     overflow: "hidden", // Ensures the content doesn't overflow the rectangle's boundaries
+  },
+  searchContainer: {
+    width: '80%',
+    margin: 20,
+    alignItems: 'center',
+    shadowColor: "#000",
+    shadowOpacity: 1.0,
+    backgroundColor:'#fff',
+    borderRadius: 30,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowRadius: 10,
+    elevation: 4,
+  },
+  searchInput: {
+    backgroundColor: '#fff',
+    width: '100%',
+    borderRadius: 20,
+    padding: 10,
+    fontSize: 16,
   },
   image: {
     width: "100%",
@@ -103,9 +181,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   serviceTitleContainer: {
-    width: "90%", 
-    alignItems: "flex-start", 
-    marginBottom: 10, 
+    width: "90%",
+    alignItems: "flex-start",
+    marginBottom: 10,
   },
   serviceTitle: {
     fontSize: 18,
@@ -126,11 +204,102 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     backgroundColor: "#ddd",
+    flexDirection: 'column',
+    justifyContent: 'center',
     borderRadius: 30,
+    alignItems: 'center',
   },
   serviceText: {
     marginTop: 8,
     textAlign: "center",
     color: "#333",
+  },
+
+  shopSection: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    paddingVertical: 14,
+    marginBottom: 73,
+    marginHorizontal: 15,
+    shadowColor: "#000",
+    shadowOpacity: 1.0,
+    shadowOffset: {
+      width: 0,
+      height: 4
+    },
+    shadowRadius: 10,
+    elevation: 4,
+  },
+  row3: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  row4: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 11,
+  },
+  text3: {
+    color: "#4EA0B7",
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  text4: {
+    color: "#000000",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 7,
+    marginLeft: 1,
+  },
+  text5: {
+    color: "#AEACAC",
+    fontSize: 12,
+    fontWeight: "bold",
+    flex: 1,
+  },
+  text6: {
+    color: "#000000",
+    fontSize: 14,
+    fontWeight: "bold",
+    marginLeft: 4,
+  },
+  text7: {
+    color: "#4EA0B7",
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  view4: {
+    width: 43,
+    alignItems: "center",
+    backgroundColor: "#FFF5F0",
+    borderRadius: 2,
+    paddingVertical: 5,
+  },
+  view2: {
+    width: 127,
+    height: 108,
+    paddingLeft: 92,
+    paddingRight: 5,
+    marginRight: 17,
+  },
+  view3: {
+    borderRadius: 15,
+  },
+  image6: {
+    width: 11,
+    height: 16,
+    marginRight: 8,
+  },
+  column: {
+    flex: 1,
+    // width: 121,
+    // marginRight: 1,
+    paddingLeft: 10,
+    paddingRight: 10,
   },
 });
