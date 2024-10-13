@@ -96,12 +96,12 @@ const Notify = () => {
         </Text>       
       </View> */}
       <Header title="Notifications" />
-      <TouchableOpacity
+      {/* <TouchableOpacity
           style={styles.messageButton}
           onPress={() => navigation.navigate("screen/message")} // Update navigation path
         >
           <Text style={styles.messageButtonText}>Go to Messages</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       <FlatList
         data={notifications}
         keyExtractor={(item) => item.id}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Image, TextInput } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "expo-router";
@@ -11,14 +11,19 @@ import CutIcon from './../../assets/images/cut.png';
 const SubHeader = () => {
   const { t } = useTranslation();
   const router = useRouter();
+  const [id, setId] = useState(1);
 
   const handleJoinNow = () => {
     console.log("Join Now clicked!");
   };
 
-  const handleBooking = () => {
+  const handleBooking = async () => {
     router.push('/screen/details');
   }
+
+  const handleSearchClick = () => {
+    router.push('/screen/search');
+  };
 
   return (
     <View style={styles.subHeaderContainer}>
@@ -46,12 +51,13 @@ const SubHeader = () => {
         <ServiceButton title="Thú y" icon={MedicalIcon} />
         <ServiceButton title="Tiêm ngừa" icon={VaccineIcon} />
       </View>
-      <View style={styles.searchContainer}>
+      <TouchableOpacity onPress={handleSearchClick} style={styles.searchContainer}>
         <TextInput
           placeholder="Tìm kiếm cửa hàng"
           style={styles.searchInput}
+          editable={false} 
         />
-      </View>
+      </TouchableOpacity>
       <View style={styles.serviceTitleContainer}>
         <Text style={styles.serviceTitle}>{t("recommend", "Gợi ý")}</Text>
       </View>

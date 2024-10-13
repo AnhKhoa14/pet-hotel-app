@@ -1,206 +1,129 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, PermissionsAndroid } from 'react-native';
-import { useRouter } from 'expo-router';
-import { launchImageLibrary } from 'react-native-image-picker';
-import { commonStyles } from '../../style';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Header from './../../components/Header/header';
-import i18n from '../../i18n';
-import { useTranslation } from 'react-i18next';
-import * as ImagePicker from 'expo-image-picker';
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
+import { useRouter } from "expo-router";
+import { Picker } from '@react-native-picker/picker'; 
+import API from "../../config/AXIOS_API";
+import { useTranslation } from "react-i18next";
+import { SafeAreaView } from "react-native-safe-area-context";
+import {commonStyles} from "../../style";
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Make sure you have this imported
 
 
 const InitProfileScreen = () => {
   const router = useRouter();
+  const { t } = useTranslation();
+
   const [imageUri, setImageUri] = useState(null);
-  const { t, i18n } = useTranslation();
-  const requestPermission = async () => {
+  const [petType, setPetType] = useState('');
+  const [petName, setPetName] = useState('');
+  const [petBreed, setPetBreed] = useState('');
+  const [petColor, setPetColor] = useState('');
+  const [petWeight, setPetWeight] = useState('');
+  const [petGender, setPetGender] = useState('');
+  const [petAge, setPetAge] = useState('');
+  const [petTypes, setPetTypes] = useState([]);
+
+  useEffect(() => {
+    fetchPetTypes();
+  }, []);
+
+  const fetchPetTypes = async () => {
     try {
-      console.log('pressed');
-
-      // const checkPermission = 
-      const result =
-        await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.All,
-          allowsEditing: true,
-          aspect: [4, 3],
-          quality: 1,
-        });
-
-      setImageUri(result.assets[0].uri);
-      // PermissionsAndroid.request(
-      //   PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-      //   {
-      //     title: "Storage Permission",
-      //     message: "This app needs access to your storage to select images.",
-      //     buttonNeutral: "Ask Me Later",
-      //     buttonNegative: "Cancel",
-      //     buttonPositive: "OK"
-      //   }      );
-
-      // if (checkPermission === PermissionsAndroid.RESULTS.GRANTED) {
-      //   console.log('Storage permission granted');
-
-      //   const result = await launchImageLibrary({
-      //     mediaType: 'photo',
-      //     includeBase64: false,
-      //   });
-      // }
+      const response = await API.get('/pet-types'); 
+      setPetTypes(response.data); 
     } catch (error) {
-      console.log('Error requesting permission:', error);
+      console.error('Error fetching pet types:', error);
     }
-  }
-
-  // const selectImage = () => {
-  //   launchImageLibrary(
-  //     {
-  //       mediaType: 'photo',
-  //     },
-  //     (response) => {
-  //       if (response.didCancel) {
-  //         console.log('User cancelled image picker');
-  //       } else if (response.errorMessage) {
-  //         console.log('ImagePicker Error: ', response.errorMessage);
-  //       } else {
-  //         const uri = response.assets[0]?.uri;
-  //         setImageUri(uri);
-  //       }
-  //     }
-  //   );
-  // };
-
-  const handleAdd = () => {
-    router.push('/screen/verify');
   };
 
-  const handleSkip = () => {
-    router.push('/home')
+  const handleAdd = async () => {
+    const petData = {
+      name: petName,
+      age: parseFloat(petAge),
+      breed: petBreed,
+      color: petColor,
+      weight: parseFloat(petWeight),
+      gender: petGender,
+      petTypeId: petType, // Here you use the selected pet type ID
+      userId: 1, // Adjust user ID as necessary
+    };
+
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if(!token) {
+        console.error('No token found');
+        return;
+      }
+
+      const response = await API.post('/pets', petData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.status === 201) {
+        console.log('Pet created:', response.data);
+        router.push("/screen/pet");
+      } else {
+        console.error('Error creating pet:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+    }
   };
 
   return (
     <SafeAreaView style={commonStyles.container}>
-      <Header title={t('addPet')} />
       <ScrollView style={commonStyles.containerContent}>
         <View style={styles.uploadGroup}>
-          <TouchableOpacity onPress={requestPermission} style={{ margin: 20 }}>
+          <TouchableOpacity onPress={() => {/* Handle image upload */}}>
             {imageUri && (
-              <Image
-                source={{ uri: imageUri }}
-                style={{ width: 150, height: 150, marginBottom: 10, borderRadius: 75 }}
-              />
-
+              <Image source={{ uri: imageUri }} style={styles.image} />
             )}
+            {!imageUri && <Image source={require("./../../assets/images/icons8-camera-50.png")} />}
           </TouchableOpacity>
-          {/* {imageUri && (
-            <Image
-              source={{ uri: imageUri }}
-              style={{ width: 150, height: 150, marginBottom: 10, borderRadius: 75 }}
-            />
-            
-          )} */}
-          {!imageUri && (
-            <TouchableOpacity onPress={requestPermission} style={{ margin: 20 }}>
-              <Image
-                source={
-                  require('./../../assets/images/icons8-camera-50.png')
-                }
-              />
-            </TouchableOpacity>
-          )}
-
         </View>
-        <Text style={styles.header}>
-          {t('petName')}
-        </Text>
 
-        <TextInput
-          style={commonStyles.input}
-          placeholder={t('petName')}>
-        </TextInput>
+        <Text style={styles.header}>{t("petName")}</Text>
+        <TextInput style={commonStyles.input} placeholder={t("petName")} value={petName} onChangeText={setPetName} />
 
-        <Text style={styles.header}>
-          {t('petBreed')}
-        </Text>
-        <TextInput
-          style={commonStyles.input}
-          placeholder={t('petBreed')}
-        />
+        <Text style={styles.header}>{t("petBreed")}</Text>
+        <TextInput style={commonStyles.input} placeholder={t("petBreed")} value={petBreed} onChangeText={setPetBreed} />
 
-        <Text style={styles.header}>
-          {t('colourPet')}
-        </Text>
-        <TextInput
-          style={commonStyles.input}
-          placeholder={t('colourPet')}
-        />
+        <Text style={styles.header}>{t("colourPet")}</Text>
+        <TextInput style={commonStyles.input} placeholder={t("colourPet")} value={petColor} onChangeText={setPetColor} />
 
-        <Text style={styles.header}>
-          {t('petHeight')}
-        </Text>
-        <TextInput
-          style={commonStyles.input}
-          placeholder={t('petHeight')}
-          keyboardType='numeric'
-        />
+        <Text style={styles.header}>{t("petType")}</Text>
+        <View style={commonStyles.input}>
+          <Picker selectedValue={petType} onValueChange={(itemValue) => setPetType(itemValue)} style={{ height: 50, width: '100%' }}>
+            <Picker.Item label={t("selectPetType")} value="" />
+            {petTypes.map((type) => (
+              <Picker.Item key={type.id} label={type.name} value={type.id} /> // Assuming type has id and name
+            ))}
+          </Picker>
+        </View>
 
-        <Text style={styles.header}>
-          {t('petWeight')}
-        </Text>
-        <TextInput
-          style={commonStyles.input}
-          placeholder={t('petWeight')}
-          keyboardType='numeric'
-        />
+        <Text style={styles.header}>{t("petWeight")}</Text>
+        <TextInput style={commonStyles.input} placeholder={t("petWeight")} keyboardType="numeric" value={petWeight} onChangeText={setPetWeight} />
 
-        <Text style={styles.header}>
-          {t('gender')}
-        </Text>
-        <TextInput
-          style={commonStyles.input}
-          placeholder={t('gender')}
-        />
+        <Text style={styles.header}>{t("gender")}</Text>
+        <TextInput style={commonStyles.input} placeholder={t("gender")} value={petGender} onChangeText={setPetGender} />
 
-        <Text style={styles.header}>
-          {t('agePet')}
-        </Text>
-        <TextInput
-          style={commonStyles.input}
-          placeholder={t('agePet')}
-          keyboardType='numeric'
-        />
-
-        <Text style={styles.header}>
-          {t('notes')}
-        </Text>
-        <TextInput
-          style={{
-            height: 80,
-            borderWidth: 1,
-            borderColor: '#ccc',
-            borderRadius: 40,
-            paddingLeft: 20,
-            paddingRight: 20,
-            paddingTop: 10,
-            paddingBottom: 10,
-            marginBottom: 15,
-            backgroundColor: '#fff',
-            textAlignVertical: 'top',
-          }}
-          placeholder={t('notes')}
-          multiline={true}
-          numberOfLines={4}
-        />
-
+        <Text style={styles.header}>{t("agePet")}</Text>
+        <TextInput style={commonStyles.input} placeholder={t("agePet")} keyboardType="numeric" value={petAge} onChangeText={setPetAge} />
 
         <View style={commonStyles.mainButtonContainer}>
           <TouchableOpacity onPress={handleAdd} style={commonStyles.mainButton}>
             <Text style={commonStyles.textMainButton}>ADD PET</Text>
           </TouchableOpacity>
         </View>
-
-        <TouchableOpacity onPress={handleSkip}>
-          <Text style={[commonStyles.subButton, style = { marginBottom: 100 }]}>Skip here!</Text>
-        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -208,57 +131,21 @@ const InitProfileScreen = () => {
 
 const styles = StyleSheet.create({
   uploadGroup: {
-    justifyContent: 'center',
-    alignItems: 'center'
+    justifyContent: "center",
+    alignItems: "center",
   },
-
-  inputGroup: {
-    flexDirection: 'row',
-    gap: 20,
-    justifyContent: 'center',
-    // height: 50,
-
-  },
-  inputN: {
-    height: 50,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 30,
-    marginBottom: 15,
-    backgroundColor: '#fff',
-    flex: 1,
-    textAlign: 'center'
-  },
-
-  header: {
-    fontFamily: 'nunito-medium',
-    color: '#4EA0B7',
-    fontSize: 17,
-    paddingBottom: 5
-  },
-  input: {
-
-    height: 50,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    marginBottom: 15,
-    paddingLeft: 10,
-    backgroundColor: '#fff',
-  },
-  skipButton: {
-    textAlign: 'center',
-    color: '#99BED7',
-    marginBottom: 20,
-  },
-  addButton: {
-    backgroundColor: '#BEF0FF',
-    borderRadius: 8,
-    height: 50,
+  image: {
+    width: 150,
+    height: 150,
     marginBottom: 10,
-    // textDecorationColor: '#4EA0B7',
+    borderRadius: 75,
   },
-
+  header: {
+    fontFamily: "nunito-medium",
+    color: "#4EA0B7",
+    fontSize: 17,
+    paddingBottom: 5,
+  },
 });
 
 export default InitProfileScreen;

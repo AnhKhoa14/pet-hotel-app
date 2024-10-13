@@ -35,14 +35,14 @@ const LoginScreen = () => {
     };
 
     try {
-      // const response = await BASE.post('/login', loginPayload);
-      // if (response.status === 200) {
-      //   const token = response.data.access_token;
-      //   console.log('Login successful, token:', token);
-      //   await AsyncStorage.setItem('token', token);
+      const response = await BASE.post('/login', loginPayload);
+      if (response.status === 200) {
+        const token = response.data.access_token;
+        console.log('Login successful, token:', token);
+        await AsyncStorage.setItem('token', token);
 
         router.push('/home');
-      // }
+      }
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
       console.error('Login failed:', errorMessage);
@@ -50,6 +50,8 @@ const LoginScreen = () => {
       // Alert for failed login attempt
       Alert.alert('Login Failed', 'Invalid email or password. Please try again.');
     }
+
+   // router.push('/home');
   };
 
   const isValidEmail = (email) => {

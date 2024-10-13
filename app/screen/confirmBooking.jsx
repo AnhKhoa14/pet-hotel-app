@@ -134,7 +134,7 @@ const ConfirmBooking = () => {
                 </View>
                 <View style={commonStyles.mainButtonContainer}>
                     <TouchableOpacity onPress={handleBooking} style={commonStyles.mainButton}>
-                        <Text style={commonStyles.textMainButton}>Tiếp tục</Text>
+                        <Text style={commonStyles.textMainButton}>Đặt ngay</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
