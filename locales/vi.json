@@ -21,6 +21,8 @@
     "petBreed":"Giống thú cưng",
     "petWeight":"Cân nặng",
     "petHeight":"Chiều cao",
+    "petType":"Loại thú cưng",
+    "selectPetType":"Chọn loại thú cưng",
     "gender":"Giới tính",
     "agePet":"Tuổi",
     "colourPet":"Màu lông",
