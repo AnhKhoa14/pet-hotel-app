@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Image, TextInput } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "expo-router";
@@ -11,18 +11,22 @@ import CutIcon from './../../assets/images/cut.png';
 const SubHeader = () => {
   const { t } = useTranslation();
   const router = useRouter();
+  const [id, setId] = useState(1);
 
   const handleJoinNow = () => {
     console.log("Join Now clicked!");
   };
 
-  const handleBooking = () => {
+  const handleBooking = async () => {
     router.push('/screen/details');
   }
 
+  const handleSearchClick = () => {
+    router.push('/screen/search');
+  };
+
   return (
     <View style={styles.subHeaderContainer}>
-      {/* Rectangle with image background and overlay */}
       <View style={styles.rectangle}>
         <Image
           source={BackgroundImange}
@@ -46,12 +50,13 @@ const SubHeader = () => {
         <ServiceButton title="Thú y" icon={MedicalIcon} />
         <ServiceButton title="Tiêm ngừa" icon={VaccineIcon} />
       </View>
-      <View style={styles.searchContainer}>
+      <TouchableOpacity onPress={handleSearchClick} style={styles.searchContainer}>
         <TextInput
           placeholder="Tìm kiếm cửa hàng"
           style={styles.searchInput}
+          editable={false} 
         />
-      </View>
+      </TouchableOpacity>
       <View style={styles.serviceTitleContainer}>
         <Text style={styles.serviceTitle}>{t("recommend", "Gợi ý")}</Text>
       </View>
@@ -125,8 +130,8 @@ const styles = StyleSheet.create({
     width: "90%",
     height: 200,
     marginBottom: 20,
-    position: "relative", // Allows overlay positioning
-    overflow: "hidden", // Ensures the content doesn't overflow the rectangle's boundaries
+    position: "relative",
+    overflow: "hidden",
   },
   searchContainer: {
     width: '80%',
@@ -152,15 +157,15 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: "100%",
-    position: "absolute", // Makes the image fill the rectangle
+    height: "110%",
+    position: "absolute", 
     top: 0,
     left: 0,
     borderRadius: 20,
   },
   overlayContainer: {
-    position: "absolute", // Positioned over the image
-    top: "30%", // Adjust based on your design
+    position: "absolute", 
+    top: "30%",
     left: 0,
     right: 0,
     alignItems: "center",
@@ -297,8 +302,6 @@ const styles = StyleSheet.create({
   },
   column: {
     flex: 1,
-    // width: 121,
-    // marginRight: 1,
     paddingLeft: 10,
     paddingRight: 10,
   },

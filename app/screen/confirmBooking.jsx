@@ -1,15 +1,143 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, ScrollView, Image, Text, ImageBackground, StyleSheet, TouchableOpacity, } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../../components/Header/header";
 import { commonStyles } from "../../style";
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import API from '../../config/AXIOS_API';
 
 const ConfirmBooking = () => {
+    const [bookingData, setBookingData] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    const shopId = AsyncStorage.getItem("shopId");
+    const token = AsyncStorage.getItem("token");
+
+
+
+    const [shop, setShop] = useState([]);
+    const [room, setRoom] = useState([]);
+    const [service, setService] = useState([]);
+
+
+    const selectedServiceNames = service
+        .filter(service => bookingData.serviceIds.includes(service.id))
+        .map(service => service.name);
+
+    {/* fetch data */ }
+
+    const fetchBookingData = async () => {
+        try {
+            const storedData = await AsyncStorage.getItem('booking');
+            console.log("Stored Data:", storedData);
+
+            if (storedData) {
+                const parsedData = JSON.parse(storedData);
+                setBookingData(parsedData);
+                console.log("Parsed Booking Data:", parsedData);
+            } else {
+                console.log("No booking data found");
+            }
+        } catch (error) {
+            console.error('Error loading booking data:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+
+    const fetchShopDetails = async () => {
+        try {
+            const response = await API.get(`/shops/${shopId}`);
+            if (response.data) {
+                setShop(response.data.content);
+            }
+            console.log("Shop Details:", response.data.content);
+        } catch (error) {
+            console.error("Error fetching Shop Details confirm booking:", error);
+        }
+    };
+    const fetchRoomDetails = async () => {
+        try {
+            const response = await API.get(`/rooms/${bookingData.roomId}`);
+            if (response.data) {
+                setRoom(response.data);
+            }
+            console.log("Room Details:", response.data);
+        } catch (error) {
+            console.error("Error fetching Room Details confirm booking:", error);
+        }
+    };
+    const fetchServices = async () => {
+        try {
+            const response = await API.get(`/services/shops/1`);
+            if (response.data) {
+                setService(response.data.content);
+            }
+            console.log("Services:", response.data.content);
+        } catch (error) {
+            console.error("Error fetching services booking:", error);
+        }
+    };
+
     const router = useRouter();
 
-    const handleBooking = () => {
-        router.push('screen/bookingSuccess');
+
+
+
+    useEffect(() => {
+        fetchBookingData();
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            // if (bookingData.roomId) {
+                await fetchServices();
+                // fetchShopDetails(); // Uncomment if needed
+                // fetchRoomDetails(); // Uncomment if needed
+            // }
+        };
+
+        fetchData();
+    }, [bookingData]);
+
+
+
+    const handleBooking = async () => {
+        console.log("Token:", token);
+        const tokencc = token._j;
+        console.log("Tokencc:", tokencc);
+
+
+        try {
+            const body = {
+                startDate: bookingData.startDate,
+                endDate: bookingData.endDate,
+                note: bookingData.note,
+                totalPrice: bookingData.totalPrices,
+                // roomId: bookingData.roomId,
+                roomId: 1,
+                petId: bookingData.petId,
+                userId: bookingData.userId,
+                serviceIds: bookingData.serviceIds
+            };
+
+            console.log("Request Body:", body);
+
+            const response = await API.post("/bookings", body, {
+                headers: {
+                    Authorization: `Bearer ${tokencc}`,
+                },
+            });
+            if (response.status === 201) {
+                console.log("Services:", response.data);
+                router.push('screen/bookingSuccess');
+            }
+        } catch (error) {
+            console.error("Error fetching services booking:", error);
+        }
     }
 
     return (
@@ -28,16 +156,13 @@ const ConfirmBooking = () => {
                     </View>
 
                     <View style={styles.column}>
-                        <View style={styles.row3}>
+                        {/* <View style={styles.row3}>
                             <View style={styles.view4}>
-                                <Text style={styles.text3}>
-                                    {"10% Off"}
-                                </Text>
                             </View>
                             <Text style={styles.text7}>
                                 {"4.8"}
                             </Text>
-                        </View>
+                        </View> */}
                         <Text style={styles.text4}>
                             {"KATYB PET CARE"}
                         </Text>
@@ -62,7 +187,7 @@ const ConfirmBooking = () => {
                         {"Ngày đặt"}
                     </Text>
                     <Text style={styles.text9}>
-                        {"24/09/2024 | 14:00 CH"}
+                        {loading ? "..." : (bookingData ? bookingData.dateBooking : "Chưa có dữ liệu đặt phòng")}
                     </Text>
                 </View>
                 <View style={styles.row6}>
@@ -70,7 +195,7 @@ const ConfirmBooking = () => {
                         {"Ngày gửi"}
                     </Text>
                     <Text style={styles.text9}>
-                        {"10/10/2024"}
+                        {loading ? "..." : (bookingData ? bookingData.startDate : "Chưa có dữ liệu đặt phòng")}
                     </Text>
                 </View>
                 <View style={styles.row5}>
@@ -78,16 +203,25 @@ const ConfirmBooking = () => {
                         {"Ngày trả"}
                     </Text>
                     <Text style={styles.text9}>
-                        {"13/10/2024"}
+                        {loading ? "..." : (bookingData ? bookingData.endDate : "Chưa có dữ liệu đặt phòng")}
                     </Text>
                 </View>
                 <View style={styles.row7}>
                     <Text style={styles.text8}>
-                        {"Số lượng thú cưng"}
+                        {"Dịch vụ"}
                     </Text>
-                    <Text style={styles.text9}>
-                        {"01 bé"}
-                    </Text>
+                    {selectedServiceNames.length === 0 ? (
+                        <Text style={styles.text9}>
+                            {"Không dùng dịch vụ"}
+                        </Text>
+                    ) : (
+                        <View>
+                            {selectedServiceNames.map((name, index) => (
+                                <Text key={index}>{name}</Text>
+                            ))}
+                        </View>
+                    )}
+
                 </View>
                 <View style={styles.box3}>
                 </View>
@@ -96,7 +230,7 @@ const ConfirmBooking = () => {
                         {"Thành tiền "}
                     </Text>
                     <Text style={styles.text9}>
-                        {"150.000VND"}
+                        {loading ? "..." : (bookingData ? bookingData.totalPrices : "Chưa có dữ liệu đặt phòng")}
                     </Text>
                 </View>
                 <View style={styles.row9}>
@@ -104,7 +238,7 @@ const ConfirmBooking = () => {
                         {"Thuế dịch vụ"}
                     </Text>
                     <Text style={styles.text9}>
-                        {"0VND"}
+                        {loading ? "..." : (bookingData ? bookingData.totalPrices * 0.05 : "Chưa có dữ liệu đặt phòng")}
                     </Text>
                 </View>
                 <View style={styles.row10}>
@@ -112,19 +246,19 @@ const ConfirmBooking = () => {
                         {"Tổng tiền"}
                     </Text>
                     <Text style={styles.text9}>
-                        {"150.000VND"}
+                        {loading ? "..." : (bookingData ? bookingData.totalPrices : "Chưa có dữ liệu đặt phòng")}
                     </Text>
                 </View>
                 <View style={styles.box4}>
                 </View>
                 <View style={styles.row11}>
                     <Image
-                        source={{ uri: "https://i.imgur.com/1tMFzp8.png" }}
+                        source={{ uri: "https://static-00.iconduck.com/assets.00/qr-scan-icon-512x512-9bsp061y.png" }}
                         resizeMode={"stretch"}
                         style={styles.image7}
                     />
                     <Text style={styles.text8}>
-                        {"Debit card"}
+                        {"QR Code"}
                     </Text>
                     <View style={styles.box5}>
                     </View>
@@ -134,7 +268,7 @@ const ConfirmBooking = () => {
                 </View>
                 <View style={commonStyles.mainButtonContainer}>
                     <TouchableOpacity onPress={handleBooking} style={commonStyles.mainButton}>
-                        <Text style={commonStyles.textMainButton}>Tiếp tục</Text>
+                        <Text style={commonStyles.textMainButton}>Đặt ngay</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
@@ -212,9 +346,9 @@ const styles = StyleSheet.create({
         marginRight: 8,
     },
     image7: {
-        width: 16,
-        height: 12,
-        marginRight: 5,
+        width: 20,
+        height: 20,
+        marginRight: 10,
     },
 
     shopSection: {
