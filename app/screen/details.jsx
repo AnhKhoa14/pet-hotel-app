@@ -27,30 +27,29 @@ const Details = () => {
   const [serviceData, setServiceData] = useState([]);
   const id = 1;
 
+  const fetchShopData = async () => {
+    try {
+      const response = await API.get(`/shops/${id}`);
+      setShopData(response.data);
+      console.log("Shop data:", response.data);
+    } catch (error) {
+      console.error("Error fetching shop data:", error);
+    }
+  };
+
+  const fetchService = async () => {
+    try {
+      const response = await API.get(`/services/shops/${id}`);
+      setServiceData(response.data.content);
+      console.log("Service data:", response.data.content);
+    } catch (error) {
+      console.error("Error fetching service data:", error);
+    }
+  };
   useEffect(() => {
-    const fetchShopData = async () => {
-      try {
-        const response = await API.get(`/shops/${id}`);
-        setShopData(response.data);
-        console.log("Shop data:", response.data);
-      } catch (error) {
-        console.error("Error fetching shop data:", error);
-      }
-    };
-
-    const fetchService = async () => {
-      try {
-        const response = await API.get(`/services/shops/${id}`);
-        setServiceData(response.data.content);
-        console.log("Service data:", response.data.content);
-      } catch (error) {
-        console.error("Error fetching service data:", error);
-      }
-    };
-
     fetchShopData();
     fetchService();
-  }, [id]);
+  }, []);
 
   const handleBooking = () => {
     router.push("/screen/booking");

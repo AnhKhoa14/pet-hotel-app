@@ -27,7 +27,6 @@ const SubHeader = () => {
 
   return (
     <View style={styles.subHeaderContainer}>
-      {/* Rectangle with image background and overlay */}
       <View style={styles.rectangle}>
         <Image
           source={BackgroundImange}
@@ -131,8 +130,8 @@ const styles = StyleSheet.create({
     width: "90%",
     height: 200,
     marginBottom: 20,
-    position: "relative", // Allows overlay positioning
-    overflow: "hidden", // Ensures the content doesn't overflow the rectangle's boundaries
+    position: "relative",
+    overflow: "hidden",
   },
   searchContainer: {
     width: '80%',
@@ -158,15 +157,15 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: "100%",
-    position: "absolute", // Makes the image fill the rectangle
+    height: "110%",
+    position: "absolute", 
     top: 0,
     left: 0,
     borderRadius: 20,
   },
   overlayContainer: {
-    position: "absolute", // Positioned over the image
-    top: "30%", // Adjust based on your design
+    position: "absolute", 
+    top: "30%",
     left: 0,
     right: 0,
     alignItems: "center",
@@ -303,8 +302,6 @@ const styles = StyleSheet.create({
   },
   column: {
     flex: 1,
-    // width: 121,
-    // marginRight: 1,
     paddingLeft: 10,
     paddingRight: 10,
   },
