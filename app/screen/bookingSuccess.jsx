@@ -1,11 +1,89 @@
-import React from 'react'
-import { View, ScrollView, Text, Image, StyleSheet, TouchableOpacity, } from "react-native";
+import React, { useEffect, useState } from 'react';
+import { View, ScrollView, Text, Image, StyleSheet, TouchableOpacity, Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../../components/Header/header";
 import { commonStyles } from "../../style";
-import SuccessIcon from "./../../assets/images/success.png"
+import SuccessIcon from "./../../assets/images/success.png";
+import API from '../../config/AXIOS_API';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { use } from 'i18next';
+import { useRouter } from 'expo-router';
 
 const BookingSuccess = () => {
+    const [bookingData, setBookingData] = useState(null);
+    const router = useRouter();
+
+    useEffect(() => {
+        // Fetch the booking data and token from AsyncStorage
+        const fetchBookingData = async () => {
+            try {
+                const storedData = await AsyncStorage.getItem('booking');
+                
+                if (storedData) {
+                    const parsedData = JSON.parse(storedData);
+                    setBookingData(parsedData);
+                    console.log("Booking Data:", parsedData);
+                } else {
+                    console.log("No booking data found");
+                }
+            } catch (error) {
+                console.error('Error loading booking data:', error);
+            }
+        };
+
+        fetchBookingData();
+    }, []);
+
+    const handlePayment = async () => {
+        const token = await AsyncStorage.getItem('token');
+        console.log("Token:", token);
+        console.log("Booking Data:", bookingData?.id);
+        try {
+            const response = await API.post(`/payment/create-paymentlink/booking/9`, {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+
+            if (response.data) {
+                console.log("Payment Link:", response.data);                
+                // Use Linking to open the payment URL in the web browser
+                // if (checkoutUrl) {
+                //     Linking.openURL(checkoutUrl).catch((err) => console.error('Failed to open URL:', err));
+                // }
+
+                const { accountName, accountNumber, amount, bin, description, qrCode, orderCode } = response.data;
+                console.log("Account name:", accountName);
+                console.log("Account number:", accountNumber);
+                console.log("Amount:", amount);
+                console.log("BIN:", bin);
+                console.log("Description:", description);
+                console.log("QR Code:", qrCode);
+                console.log("Order Code:", orderCode);
+
+
+                router.push({
+                    pathname: 'screen/payment',
+                    params: {
+                        accountName,
+                        accountNumber,
+                        amount,
+                        bin,
+                        description,
+                        qrCode,
+                        orderCode,
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Error handling payment:', error);
+        }
+    };
+
+    // const handlePayment = () => {
+    //     router.push('screen/payment');
+    // }
+
     return (
         <SafeAreaView style={commonStyles.container}>
             <Header title={"Đặt phòng thành công"} />
@@ -21,7 +99,7 @@ const BookingSuccess = () => {
                         {"ApeHome cảm ơn bạn đã mua hàng."}
                     </Text>
                 </View>
-                <TouchableOpacity style={styles.view3}>
+                <TouchableOpacity style={styles.view3} onPress={handlePayment}>
                     <Text style={styles.text5}>
                         {"Tiến hành thanh toán"}
                     </Text>
@@ -31,27 +109,18 @@ const BookingSuccess = () => {
                         {"Trang chủ"}
                     </Text>
                 </TouchableOpacity>
-
             </ScrollView>
         </SafeAreaView>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     successContainer: {
         marginTop: 50,
-        // gap:20,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'space-between'
     },
-
-
-   
-    
-    
-    
-    
     text3: {
         color: "#4EA0B7",
         fontSize: 25,
@@ -66,30 +135,13 @@ const styles = StyleSheet.create({
     text5: {
         color: "#FDFBF6",
         fontSize: 18,
-        // fontWeight: "bold",
         fontFamily: 'nunito-bold',
     },
     text6: {
         color: "#4EA0B7",
         fontSize: 18,
-        // fontWeight: "bold",
         marginBottom: 30,
         fontFamily: 'nunito-bold',
-
-    },
-    view: {
-        width: 22,
-        borderColor: "#000000",
-        borderRadius: 2,
-        borderWidth: 1,
-        paddingHorizontal: 2,
-        marginRight: 1,
-    },
-    view2: {
-        width: 17,
-        flexDirection: "row",
-        alignItems: "center",
-        marginRight: 18,
     },
     view3: {
         alignItems: "center",
@@ -101,6 +153,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default BookingSuccess
-
-
+export default BookingSuccess;
