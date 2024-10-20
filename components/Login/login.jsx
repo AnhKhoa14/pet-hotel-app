@@ -44,7 +44,7 @@ const LoginScreen = () => {
         console.log('Login successful, token:', token);
         console.log('Login successful, userId:', userId);
         await AsyncStorage.setItem('token', token);
-        await AsyncStorage.setItem('userId', userId.toString());
+        await AsyncStorage.setItem('userId', userId);
 
         router.push('/home');
       }

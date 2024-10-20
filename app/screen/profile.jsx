@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet,ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { commonStyles } from '../../style';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,16 +10,55 @@ import Header from './../../components/Header/header'
 import i18n from '../../i18n';
 import { useTranslation } from 'react-i18next';
 import * as ImagePicker from 'expo-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import API from '../../config/AXIOS_API';
 
 const ProfileScreen = () => {
   const { t, i18n } = useTranslation();
   const router = useRouter();
-  const [selectedValue, setSelectedValue] = useState("Male");
+  const [gender, setGender] = useState("Male");
   const [imageUri, setImageUri] = useState(null);
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [address, setAddress] = useState('');
+  const [phone, setPhone] = useState('');
+  const [userInfo, setUserInfor] = useState();
+  const [userId, setUserId] = useState(null);
 
   const handleUpdate = () => {
     // router.push('/');
   };
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      const userIdcc = await AsyncStorage.getItem("userId");
+      setUserId(userIdcc);
+    };
+
+    fetchUserId();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (userId) {
+        try {
+          const response = await API.get(`users/${userId}`);
+          console.log(response.data);
+          setUserInfor(response.data);
+          setFullName(response.data.fullName);
+          setAddress(response.data.address);
+          setEmail(response.data.email);
+          setPhone(response.data.phone);
+          setFormattedDate(response.data.dob);
+          console.log("Fetching success info");
+        } catch (error) {
+          console.error("Error fetching us booking:", error);
+        }
+      }
+    };
+
+    fetchData();
+  }, [userId]);
 
   const selectImage = () => {
     launchImageLibrary(
@@ -45,30 +84,31 @@ const ProfileScreen = () => {
   const [formattedDate, setFormattedDate] = useState('');
 
   const onChangeDate = (event, selectedDate) => {
-    setShow(false); 
-    if (selectedDate) {
+    setShow(false);
+    if (event.type === 'set' && selectedDate) { // Kiểm tra nếu người dùng đã chọn một ngày
       setDate(selectedDate);
-      setFormattedDate(selectedDate.toLocaleDateString()); 
+      setFormattedDate(selectedDate.toLocaleDateString());
     }
   };
+  
 
   const showDatePicker = () => {
     setShow(true);
   }
 
 
-  const requestPermission = async ()=> {
+  const requestPermission = async () => {
     try {
       console.log('pressed');
 
       // const checkPermission = 
-      const result=
-      await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
+      const result =
+        await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 1,
+        });
 
       setImageUri(result.assets[0].uri);
 
@@ -79,17 +119,17 @@ const ProfileScreen = () => {
 
   return (
     <SafeAreaView style={commonStyles.container}>
-      <Header title={t('profile')}/>
-    <ScrollView style={commonStyles.containerContent}>
-      <View style={styles.uploadGroup}>
-      <TouchableOpacity onPress={requestPermission} style={{margin:20}}>
-          {imageUri && (
-            <Image
-              source={{ uri: imageUri }}
-              style={{ width: 150, height: 150, marginBottom: 10, borderRadius: 75 }}
-            />
-            
-          )}
+      <Header title={t('profile')} />
+      <ScrollView style={commonStyles.containerContent}>
+        <View style={styles.uploadGroup}>
+          <TouchableOpacity onPress={requestPermission} style={{ margin: 20 }}>
+            {imageUri && (
+              <Image
+                source={{ uri: imageUri }}
+                style={{ width: 150, height: 150, marginBottom: 10, borderRadius: 75 }}
+              />
+
+            )}
           </TouchableOpacity>
           {/* {imageUri && (
             <Image
@@ -98,83 +138,89 @@ const ProfileScreen = () => {
             />
             
           )} */}
-          {!imageUri&& (
+          {!imageUri && (
             <TouchableOpacity onPress={requestPermission} style={{ margin: 20 }}>
-            <Image
-              source={
-                require('./../../assets/images/icons8-camera-50.png')
-              }
-            />
-          </TouchableOpacity>
+              <Image
+                source={
+                  require('./../../assets/images/icons8-camera-50.png')
+                }
+              />
+            </TouchableOpacity>
           )}
 
-        {/* <TouchableOpacity onPress={selectImage} style={{ backgroundColor: '#BEF0FF', padding: 5, marginBottom: 20, borderRadius: 10, color: '#fff' }}>
+          {/* <TouchableOpacity onPress={selectImage} style={{ backgroundColor: '#BEF0FF', padding: 5, marginBottom: 20, borderRadius: 10, color: '#fff' }}>
           <Text style={{ color: '#fff' }}>Upload Image</Text>
         </TouchableOpacity> */}
-      </View>
-      <Text style={[styles.header, { paddingTop: 20 }]}>
-        {t('displayName')}
-      </Text>
-      <TextInput
-        style={commonStyles.input}
-        placeholder="Van Tien Dep Trai So 1"
-      />
-      <Text style={styles.header}>
-        Email
-      </Text>
-      <TextInput
-        style={commonStyles.input}
-        placeholder="email@example.com"
-        keyboardType="email-address"
-      />
-      <Text style={styles.header}>
-        {t('phoneNumber')}
-      </Text>
-      <TextInput
-        style={commonStyles.input}
-        placeholder="0373777177"
-        keyboardType="numeric"
-      />
-      <Text style={styles.header}>
-        {t('gender')}
-      </Text>
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={selectedValue}
-          style={styles.picker}
-          onValueChange={(itemValue) => setSelectedValue(itemValue)}
-        >
-          <Picker.Item label="Male" value="male" />
-          <Picker.Item label="Female" value="female" />
-          <Picker.Item label="Other" value="other" />
-        </Picker>
-      </View>
-      <Text style={styles.header}>
-        {t('birthday')}
-      </Text>
-      <View>
-        <TouchableOpacity onPress={showDatePicker}>
-          <TextInput
-            style={[commonStyles.input,styles.dateInput]}
-            value={formattedDate} 
-            editable={false} 
-          />
-        </TouchableOpacity>
-      </View>
-      {show && (
-        <DateTimePicker
-          value={date}
-          mode="date"
-          display="default"
-          onChange={onChangeDate}
+        </View>
+        <Text style={[styles.header, { paddingTop: 20 }]}>
+          {t('displayName')}
+        </Text>
+        <TextInput
+          style={commonStyles.input}
+          placeholder="Van Tien Dep Trai So 1"
+          value={fullName}
+          onChangeText={setFullName}
         />
-      )}
-      <View style={commonStyles.mainButtonContainer}>
-        <TouchableOpacity onPress={handleUpdate} style={[commonStyles.mainButton,style={marginBottom:100}]}>
-          <Text style={commonStyles.textMainButton }>{t('update')}</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+        <Text style={styles.header}>
+          Email
+        </Text>
+        <TextInput
+          style={commonStyles.input}
+          placeholder="email@example.com"
+          keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
+        />
+        <Text style={styles.header}>
+          {t('phoneNumber')}
+        </Text>
+        <TextInput
+          style={commonStyles.input}
+          placeholder="0373777177"
+          keyboardType="numeric"
+          value={phone}
+          onChangeText={setPhone}
+        />
+        <Text style={styles.header}>
+          {t('gender')}
+        </Text>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={gender}
+            style={styles.picker}
+            onValueChange={(itemValue) => setGender(itemValue)}
+          >
+            <Picker.Item label="Male" value="male" />
+            <Picker.Item label="Female" value="female" />
+            <Picker.Item label="Other" value="other" />
+          </Picker>
+        </View>
+        <Text style={styles.header}>
+          {t('birthday')}
+        </Text>
+        <View>
+          <TouchableOpacity onPress={showDatePicker}>
+            <TextInput
+              style={[commonStyles.input, styles.dateInput]}
+              value={formattedDate}
+              editable={false}
+            />
+          </TouchableOpacity>
+        </View>
+        {show && (
+          <DateTimePicker
+            value={date}
+            mode="date"
+            display="default"
+            onChange={onChangeDate}
+          />
+        )}
+        <View style={commonStyles.mainButtonContainer}>
+          <TouchableOpacity onPress={handleUpdate} style={[commonStyles.mainButton, style = { marginBottom: 100 }]}>
+            <Text style={commonStyles.textMainButton}>{t('update')}</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -192,13 +238,13 @@ const styles = StyleSheet.create({
   },
   pickerContainer: {
     height: 50,
-    borderWidth: 1,
-    borderColor: '#ccc',
+    borderWidth: 2,
+    borderColor: '#416FAE',
     borderRadius: 30,
     marginBottom: 15,
     paddingLeft: 5,
     paddingRight: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#EEF7FD',
     justifyContent: 'center',
   },
   picker: {
@@ -206,7 +252,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   dateInput: {
-    color: '#000', 
+    color: '#000',
   },
 });
 
