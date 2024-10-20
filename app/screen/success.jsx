@@ -5,13 +5,14 @@ import check from './../../assets/images/check.png'; // Đảm bảo đường d
 
 const SuccessScreen = () => {
     const router = useRouter();
-  
+    const {orderCode} = useLocalSearchParams();
+
     return (
         <View style={styles.container}>
             <Image source={check} style={styles.image} />
             <Text style={styles.successMessage}>Thanh toán thành công!</Text>
             <Text style={styles.details}>
-                Cảm ơn bạn đã thanh toán. Đơn hàng của bạn đang được xử lý.
+                Cảm ơn bạn đã thanh toán. Đơn hàng ({orderCode}) của bạn đang được xử lý.
             </Text>
             <Button
                 title="Quay lại trang chủ"
