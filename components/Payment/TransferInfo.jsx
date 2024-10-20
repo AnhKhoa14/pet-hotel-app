@@ -99,7 +99,11 @@ const TransferInfo = ({
         setStatus(true);
         socket.emit("leaveOrderRoom", orderCode);
         setTimeout(() => {
-          router.push("screen/resultScreen", { orderCode: orderCode });
+          // router.push("screen/resultScreen", { orderCode: orderCode });
+          router.push({
+            pathname: "screen/success",
+            params: { orderCode },
+          }); // Điều hướng tới SuccessScreen
         }, 3000);
       }
     });
@@ -117,8 +121,15 @@ const TransferInfo = ({
         { text: "Hủy bỏ", onPress: () => {} },
         {
           text: "Xác nhận",
-          onPress: () =>
-            router.push("screen/resultScreen", { orderCode: orderCode })
+          // onPress: () =>
+          //   router.push({
+          //     pathname: "screen/resultScreen", 
+          //     params: { orderCode: orderCode, status: "canceled" }
+          //   }),
+          onPress: () => router.push({
+            pathname: "screen/cancel",
+            params: { orderCode },
+          }), // Điều hướng tới CancelScreen
         },
       ],
       { cancelable: false }
