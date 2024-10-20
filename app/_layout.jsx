@@ -216,7 +216,32 @@ export default function RootLayout() {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="screen/success"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="screen/cancel"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="screen/payment"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="screen/resultScreen"
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack>
+      
     </ClerkProvider>
   );
 }
