@@ -36,18 +36,18 @@ const LoginScreen = () => {
     };
 
     try {
-      const response = await BASE.post('/login', loginPayload);
-      if (response.status === 200) {
-        const token = response.data.access_token;
-        const decodedToken = jwtDecode(token);
-        const userId = decodedToken.userId;
-        console.log('Login successful, token:', token);
-        console.log('Login successful, userId:', userId);
-        await AsyncStorage.setItem('token', token);
-        await AsyncStorage.setItem('userId', userId.toString());
+      // const response = await BASE.post('/login', loginPayload);
+      // if (response.status === 200) {
+      //   const token = response.data.access_token;
+      //   const decodedToken = jwtDecode(token);
+      //   const userId = decodedToken.userId;
+      //   console.log('Login successful, token:', token);
+      //   console.log('Login successful, userId:', userId);
+      //   await AsyncStorage.setItem('token', token);
+      //   await AsyncStorage.setItem('userId', userId);
 
-        router.push('/home');
-      }
+      //   router.push('/home');
+      // }
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
       console.error('Login failed:', errorMessage);
@@ -56,7 +56,7 @@ const LoginScreen = () => {
       Alert.alert('Login Failed', 'Invalid email or password. Please try again.');
     }
 
-    // router.push('/home');
+    router.push('/home');
   };
 
   const isValidEmail = (email) => {

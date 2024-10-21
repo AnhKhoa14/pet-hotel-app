@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, ScrollView, FlatList, Text, Image, StyleSheet, TouchableOpacity, TextInput } from "react-native";
+import { View, ScrollView, FlatList, Text, Image, StyleSheet, TouchableOpacity, TextInput, Modal } from "react-native";
 import { router, useRouter } from "expo-router";
 import BASE from "../../config/AXIOS_BASE";
 import { t, use } from "i18next";
@@ -10,7 +10,6 @@ import RNPickerSelect from 'react-native-picker-select';
 import moment from 'moment';
 import API from '../../config/AXIOS_API';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { color } from 'react-native-elements/dist/helpers';
 
 const months = [
   { label: 'Tháng 1', value: '01' },
@@ -52,8 +51,10 @@ const Booking = () => {
   const [selectedDayGui, setSelectedDayGui] = useState(null);
   const [selectedDayTra, setSelectedDayTra] = useState(null);
   const today = moment();
-  const daysInMonth = getDaysInMonth(selectedMonthGui, year);
-
+  const daysInMonthGui = getDaysInMonth(selectedMonthGui, year);
+  const daysInMonthTra = getDaysInMonth(selectedMonthTra, year);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const [note, setNote] = useState("");
   const [petId, setPetId] = useState();
@@ -64,6 +65,7 @@ const Booking = () => {
   const [serviceList, setServiceList] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
   const [rooms, setRooms] = useState([]);
+  const [signs, setSigns] = useState([]);
 
   const [userId, setUserId] = useState(null);
   const fetchUserId = async () => {
@@ -83,11 +85,15 @@ const Booking = () => {
 
   const shopId = AsyncStorage.getItem("shopId");
 
-  const [selectType, setSelectType] = useState(0);
+  const [selectType, setSelectType] = useState();
 
   const simplePetList = petList.map(pet => ({
     label: pet.name,
     value: pet.id,
+  }));
+  const simpleSignList = signs.map(sign => ({
+    label: sign.name,
+    value: sign.sign,
   }));
 
 
@@ -98,12 +104,12 @@ const Booking = () => {
       setSelectedServices((prevSelected) =>
         prevSelected.filter((id) => id !== item.id)
       );
-      setTotalPrice(totalPrice - price);
+      // setTotalPrice(totalPrice - price);
     } else {
       setSelectedServices((prevSelected) => [...prevSelected, item.id]);
       console.log(selectedServices);
       console.log(totalPrice);
-      setTotalPrice(totalPrice + price);
+      // setTotalPrice(totalPrice + price);
     }
   };
 
@@ -147,7 +153,7 @@ const Booking = () => {
     try {
       // const response = await API.get(`/rooms/available/shops/${shopId}`);
       // const response = await API.get(`/rooms/available/shops/1`);
-      const response = await API.get(`rooms/available/shops/random-room-by-sign?sign=A`);
+      const response = await API.get(`rooms/available/shops/random-room-by-sign?sign=${selectType}`);
       if (response.data) {
         setRooms(response.data);
       }
@@ -157,12 +163,18 @@ const Booking = () => {
     }
   };
 
-  const getRandomRoomId = (roomArray) => {
-    if (roomArray.length === 0) {
-      return null;
+
+  const fetchSign = async () => {
+    try {
+      // const response = await API.get(`/rooms/available/shops/${shopId}`);
+      const response = await API.get(`/rooms/available/shops/1`);
+      if (response.data) {
+        setSigns(response.data);
+      }
+      console.log("Signs:", response.data);
+    } catch (error) {
+      console.error("Error fetching Signs booking:", error);
     }
-    const randomIndex = Math.floor(Math.random() * roomArray.length);
-    return roomArray[randomIndex].id;
   };
 
 
@@ -175,13 +187,23 @@ const Booking = () => {
       if (userId !== null) {
         await fetchServices();
         await fetchPets();
-        await fetchRooms();
+        // await fetchRooms();
+        await fetchSign();
       }
     };
 
     fetchData();
   }, [userId]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      if (selectType) {
+        await fetchRooms();
+      }
+    };
+
+    fetchData();
+  }, [selectType]);
 
   const isBeforeToday = (date) => {
     return date.isBefore(today, 'day');
@@ -202,17 +224,36 @@ const Booking = () => {
 
 
   const handleBooking = () => {
+    let error = "";
+
+    if (!selectedDayGui) {
+      error = "Bắt buộc nhập ngày gửi";
+    } else if (selectedDayTra) {
+      if (!selectType) {
+        error = "Nếu nhập ngày trả thì bắt buộc chọn roomtype";
+      }
+    } else if (!petId) {
+      error = "Bắt buộc chọn pet";
+    } else if (!selectedDayTra && !selectType && !note) {
+      error = "Nếu không chọn ngày trả và roomtype thì bắt buộc chọn service";
+    }
+
+    if (error) {
+      setErrorMessage(error);
+      setIsModalVisible(true);
+      return;
+    }
+
     const bookingData = {
       startDate: selectedDayGui.format("YYYY-MM-DD"),
-      endDate: selectedDayTra.format("YYYY-MM-DD"),
+      endDate: selectedDayTra ? selectedDayTra.format("YYYY-MM-DD") : '',
       note: note,
       dateBooking: moment(new Date()).format("YYYY-MM-DD HH:mm"),
-      // roomId: getRandomRoomId(rooms),
       roomId: rooms.id,
       petId: petId,
       userId: userId,
       serviceIds: selectedServices,
-      totalPrices: totalPrice
+      totalPrices: rooms.price ? rooms.price : 0
     };
     console.log(bookingData);
     AsyncStorage.setItem('booking', JSON.stringify(bookingData));
@@ -252,7 +293,7 @@ const Booking = () => {
         </View>
         <View style={styles.rowNgayGui}>
           <FlatList
-            data={daysInMonth}
+            data={daysInMonthGui}
             keyExtractor={(item) => item.day.toString()}
             horizontal
             renderItem={({ item }) => {
@@ -304,7 +345,7 @@ const Booking = () => {
         </View>
         <View style={styles.rowNgayTra}>
           <FlatList
-            data={daysInMonth}
+            data={daysInMonthTra}
             keyExtractor={(item) => item.day.toString()}
             horizontal
             renderItem={({ item }) => {
@@ -351,14 +392,7 @@ const Booking = () => {
                 // paddingRight: 40,
               }}
             >
-              {/* <RNPickerSelect
-                onValueChange={(value) => setPetId(value)}
-                items={petList}
-                value={petId}
-                style={pickerSelectStyles}
-                placeholder={{ label: "Pet", value: null }}
-                useNativeAndroidPickerStyle={false}
-              /> */}
+
               <RNPickerSelect
                 onValueChange={(value) => setPetId(value)}
                 items={simplePetList}
@@ -371,7 +405,7 @@ const Booking = () => {
           </View>
 
           {/*Room type choose */}
-          {/* <View style={styles.choosePet}>
+          <View style={styles.choosePet}>
             <Text style={styles.txtPet}>
               {"Loại phòng"}
             </Text>
@@ -389,15 +423,15 @@ const Booking = () => {
               }}
             >
               <RNPickerSelect
-                onValueChange={(value) => setPetId(value)}
-                items={petList}
-                value={petId}
+                onValueChange={(value) => setSelectType(value)}
+                items={simpleSignList}
+                value={selectType}
                 style={pickerSelectStyles}
                 placeholder={{ label: "VIP", value: null }}
                 useNativeAndroidPickerStyle={false}
               />
             </View>
-          </View> */}
+          </View>
 
 
           <View style={styles.row11}>
@@ -443,6 +477,26 @@ const Booking = () => {
             <Text style={commonStyles.textMainButton}>Xác nhận đặt phòng</Text>
           </TouchableOpacity>
         </View>
+
+        <Modal
+          transparent={true}
+          animationType="slide"
+          visible={isModalVisible}
+          onRequestClose={() => setIsModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalText}>{errorMessage}</Text>
+              <TouchableOpacity
+                onPress={() => setIsModalVisible(false)}
+                style={styles.buttonClose}
+              >
+                <Text style={styles.textClose}>Đóng</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
       </ScrollView>
     </SafeAreaView>
   )
@@ -641,6 +695,34 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 4,
 
+  },
+
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '90%',
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    fontSize:18,
+    textAlign: 'center',
+  },
+  buttonClose: {
+    backgroundColor: '#4EA0B7',
+    padding: 5,
+    borderRadius: 5,
+  },
+  textClose: {
+    color: 'white',
+    fontSize:16
   },
 
 });

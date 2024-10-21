@@ -6,6 +6,7 @@ import { commonStyles } from "../../style";
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API from '../../config/AXIOS_API';
+import moment from 'moment';
 
 const ConfirmBooking = () => {
     const [bookingData, setBookingData] = useState(null);
@@ -14,16 +15,19 @@ const ConfirmBooking = () => {
     const shopId = AsyncStorage.getItem("shopId");
     const token = AsyncStorage.getItem("token");
 
-
-
     const [shop, setShop] = useState([]);
     const [room, setRoom] = useState([]);
     const [service, setService] = useState([]);
-
+    const [days,setDays]= useState(0);
 
     const selectedServiceNames = service
         .filter(service => bookingData.serviceIds.includes(service.id))
         .map(service => service.name);
+
+    const selectedServicePrices = service
+        .filter(service => bookingData.serviceIds.includes(service.id))
+        .map(service => service.price);
+    const servicePrice = selectedServicePrices.reduce((acc, price) => acc + price, 0);
 
     {/* fetch data */ }
 
@@ -35,6 +39,15 @@ const ConfirmBooking = () => {
             if (storedData) {
                 const parsedData = JSON.parse(storedData);
                 setBookingData(parsedData);
+                const startDate = moment(parsedData.startDate);
+                const endDate = parsedData.endDate ? moment(parsedData.endDate) : null;
+                if (endDate) {
+                    const day = endDate.diff(startDate, 'days');
+                    setDays(day);
+                    console.log("Số ngày giữa hai ngày:", day);
+                } else {
+                    console.log("endDate không hợp lệ.");
+                }
                 console.log("Parsed Booking Data:", parsedData);
             } else {
                 console.log("No booking data found");
@@ -46,19 +59,6 @@ const ConfirmBooking = () => {
         }
     };
 
-
-
-    const fetchShopDetails = async () => {
-        try {
-            const response = await API.get(`/shops/${shopId}`);
-            if (response.data) {
-                setShop(response.data.content);
-            }
-            console.log("Shop Details:", response.data.content);
-        } catch (error) {
-            console.error("Error fetching Shop Details confirm booking:", error);
-        }
-    };
     const fetchRoomDetails = async () => {
         try {
             const response = await API.get(`/rooms/${bookingData.roomId}`);
@@ -76,7 +76,7 @@ const ConfirmBooking = () => {
             if (response.data) {
                 setService(response.data.content);
             }
-            console.log("Services:", response.data.content);
+            // console.log("Services:", response.data.content);
         } catch (error) {
             console.error("Error fetching services booking:", error);
         }
@@ -94,9 +94,9 @@ const ConfirmBooking = () => {
     useEffect(() => {
         const fetchData = async () => {
             // if (bookingData.roomId) {
-                await fetchServices();
-                // fetchShopDetails(); // Uncomment if needed
-                // fetchRoomDetails(); // Uncomment if needed
+            await fetchServices();
+            // fetchShopDetails(); // Uncomment if needed
+            // fetchRoomDetails(); // Uncomment if needed
             // }
         };
 
@@ -116,9 +116,9 @@ const ConfirmBooking = () => {
                 startDate: bookingData.startDate,
                 endDate: bookingData.endDate,
                 note: bookingData.note,
-                totalPrice: bookingData.totalPrices,
-                // roomId: bookingData.roomId,
-                roomId: 1,
+                // totalPrice: bookingData.totalPrices,
+                roomId: bookingData.roomId,
+                // roomId: 1,
                 petId: bookingData.petId,
                 userId: bookingData.userId,
                 serviceIds: bookingData.serviceIds
@@ -136,7 +136,7 @@ const ConfirmBooking = () => {
                 router.push('screen/bookingSuccess');
             }
         } catch (error) {
-            console.error("Error fetching services booking:", error);
+            console.error("Error fetching create booking:", error);
         }
     }
 
@@ -230,7 +230,7 @@ const ConfirmBooking = () => {
                         {"Thành tiền "}
                     </Text>
                     <Text style={styles.text9}>
-                        {loading ? "..." : (bookingData ? bookingData.totalPrices : "Chưa có dữ liệu đặt phòng")}
+                        {loading ? "..." : (bookingData ? bookingData.totalPrices * days + servicePrice : "Chưa có dữ liệu đặt phòng")}
                     </Text>
                 </View>
                 <View style={styles.row9}>
@@ -238,7 +238,7 @@ const ConfirmBooking = () => {
                         {"Thuế dịch vụ"}
                     </Text>
                     <Text style={styles.text9}>
-                        {loading ? "..." : (bookingData ? bookingData.totalPrices * 0.05 : "Chưa có dữ liệu đặt phòng")}
+                        {loading ? "..." : (bookingData ? (bookingData.totalPrices* days + servicePrice) * 0.05 : "Chưa có dữ liệu đặt phòng")}
                     </Text>
                 </View>
                 <View style={styles.row10}>
@@ -246,7 +246,7 @@ const ConfirmBooking = () => {
                         {"Tổng tiền"}
                     </Text>
                     <Text style={styles.text9}>
-                        {loading ? "..." : (bookingData ? bookingData.totalPrices : "Chưa có dữ liệu đặt phòng")}
+                        {loading ? "..." : (bookingData ? (bookingData.totalPrices* days + servicePrice) * 0.05 + (bookingData.totalPrices* days + servicePrice): "Chưa có dữ liệu đặt phòng")}
                     </Text>
                 </View>
                 <View style={styles.box4}>
