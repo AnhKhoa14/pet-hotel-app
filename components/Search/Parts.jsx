@@ -64,7 +64,10 @@ export default function Parts() {
   return (
     <View style={{ padding: 25 }}>
       <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', margin: 10 }}>
-        <TouchableOpacity onPress={() => setIsSelected(1)} style={[
+        <Text style={{fontSize:16}}>
+          Recommend
+        </Text>
+        {/* <TouchableOpacity onPress={() => setIsSelected(1)} style={[
           styles.buttonType,
           { backgroundColor: isSelected !== 1 ? '#CECECF' : '#4EA0B7' },
         ]}>
@@ -81,7 +84,7 @@ export default function Parts() {
           { backgroundColor: isSelected !== 3 ? '#CECECF' : '#4EA0B7' }
         ]}>
           <Text style={{ color: 'white' }}>Phong kham</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       <FlatList
         data={hotels}

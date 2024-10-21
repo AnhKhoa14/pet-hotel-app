@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { View, ScrollView, FlatList, Text, Image, StyleSheet, TouchableOpacity, TextInput, Modal } from "react-native";
-import { router, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import BASE from "../../config/AXIOS_BASE";
 import { t, use } from "i18next";
 import Header from "../../components/Header/header";
@@ -27,6 +27,7 @@ const months = [
 ];
 
 const Booking = () => {
+  const { id } = useLocalSearchParams();
 
   const getDaysInMonth = (month, year) => {
     const daysInMonth = moment(`${year}-${month}`, 'YYYY-MM').daysInMonth();
@@ -123,7 +124,7 @@ const Booking = () => {
 
   const fetchServices = async () => {
     try {
-      const response = await API.get(`/services/shops/1`);
+      const response = await API.get(`/services/shops/${id}`);
       // const response = await API.get(`/services/shops/${shopId}`);
       if (response.data) {
         setServiceList(response.data.content);
@@ -167,7 +168,7 @@ const Booking = () => {
   const fetchSign = async () => {
     try {
       // const response = await API.get(`/rooms/available/shops/${shopId}`);
-      const response = await API.get(`/rooms/available/shops/1`);
+      const response = await API.get(`/rooms/available/shops/${id}`);
       if (response.data) {
         setSigns(response.data);
       }

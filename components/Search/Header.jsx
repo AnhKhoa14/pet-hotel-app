@@ -9,10 +9,7 @@ export default function Header() {
   const router = useRouter();
 
   const handleSearch = () => {
-    router.push({
-      pathname: "/search/SearchResult",
-      params: { query: search },
-    });
+    router.push("/search/SearchResult");
   };
 
   return (

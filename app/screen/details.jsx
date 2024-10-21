@@ -12,20 +12,22 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../../components/Header/header";
 import { commonStyles } from "../../style";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useRouter } from "expo-router";
+import { useRouter , useLocalSearchParams  } from "expo-router";
 import ChatIcon from "./../../assets/images/chat.png";
 import CallIcon from "./../../assets/images/call.png";
 import API from "../../config/AXIOS_API";
 
 const Details = () => {
   const router = useRouter();
+  const { id } = useLocalSearchParams();
+  console.log("shop",id);
   const [shopData, setShopData] = useState({
     name: "",
     address: "",
     description: "",
   });
   const [serviceData, setServiceData] = useState([]);
-  const id = 1;
+  // const id = 1;
 
   const fetchShopData = async () => {
     try {
@@ -52,7 +54,11 @@ const Details = () => {
   }, []);
 
   const handleBooking = () => {
-    router.push("/screen/booking");
+    // router.push("/screen/booking");
+    router.push({
+      pathname: '/screen/booking',
+      params: { id: id },
+    });
   };
 
   return (

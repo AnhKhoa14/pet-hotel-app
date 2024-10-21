@@ -178,10 +178,10 @@ const TransferInfo = ({
         )}
         <View style={styles.headerRight}>
           {bank.name && <Text style={styles.bankName}>{bank.name}</Text>}
-          <Text>{accountName}</Text>
         </View>
       </View>
       <View style={styles.innerContainer}>
+        <TransferInfoField label="Chủ tài khoản" text={accountName} />
         <TransferInfoField label="Số tài khoản" text={accountNumber} />
         <TransferInfoField label="Số tiền chuyển khoản" text={amount} />
         <TransferInfoField label="Nội dung chuyển khoản" text={description} />
@@ -249,9 +249,9 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     height: 50,
-    backgroundColor: "rgba( 130, 147, 240, 255)",
+    // backgroundColor: "rgba( 130, 147, 240, 255)",
     paddingVertical: 5,
-    gap: 5,
+    gap: 15,
   },
   image: {
     flex: 1,

@@ -8,16 +8,18 @@ import {
   ScrollView,
   Image,
 } from "react-native";
-import { useRoute } from "@react-navigation/native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import RNPickerSelect from "react-native-picker-select";
+// import { useRoute } from "@react-navigation/native";
+// import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+// import FontAwesome from "@expo/vector-icons/FontAwesome";
+// import RNPickerSelect from "react-native-picker-select";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { commonStyles } from '../../style';
+import API from "../../config/AXIOS_API";
+import { useRouter } from 'expo-router';
 
 export default function SearchResult() {
-  const route = useRoute();
-  const { query } = route.params || {};
-
+  const router = useRouter();
+  const [data, setData] = useState([]);
   const [selectedPrice, setSelectedPrice] = useState(null);
   const [selectedWeight, setSelectedWeight] = useState(null);
   const [provinces, setProvinces] = useState([]);
@@ -25,31 +27,31 @@ export default function SearchResult() {
   const [selectedProvince, setSelectedProvince] = useState(null);
 
   // Function to fetch localities (provinces)
-  const fetchProvinces = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(
-        "https://online-gateway.ghn.vn/shiip/public-api/master-data/province",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Token: "d6e3dccb-6289-11ea-8b85-c60e4edfe802",
-          },
-        }
-      );
-      const data = await response.json();
-      const provinceList = data.data.map((province) => ({
-        label: province.ProvinceName,
-        value: province.ProvinceID,
-      }));
-      setProvinces(provinceList);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching provinces:", error);
-      setLoading(false);
-    }
-  };
+  // const fetchProvinces = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await fetch(
+  //       "https://online-gateway.ghn.vn/shiip/public-api/master-data/province",
+  //       {
+  //         method: "GET",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Token: "d6e3dccb-6289-11ea-8b85-c60e4edfe802",
+  //         },
+  //       }
+  //     );
+  //     const data = await response.json();
+  //     const provinceList = data.data.map((province) => ({
+  //       label: province.ProvinceName,
+  //       value: province.ProvinceID,
+  //     }));
+  //     setProvinces(provinceList);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     console.error("Error fetching provinces:", error);
+  //     setLoading(false);
+  //   }
+  // };
 
   // Call fetchProvinces when the user clicks on "Locality"
   const handleLocalityPress = () => {
@@ -58,11 +60,31 @@ export default function SearchResult() {
     }
   };
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.subtitle}>Showing results for: {query}</Text>
+  const handleDetails = (id) => {
+    router.push({
+      pathname: '/screen/details',
+      params: { id: id },
+    });  }
 
-      <View style={styles.rowContainer}>
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await API.get('/shops');
+        if (response.status === 200) {
+          console.log("fetch success", response.data);
+          setData(response.data.content);
+        }
+      } catch (error) {
+        console.error("Error search result", error);
+      }
+    }
+
+    fetchData();
+  }, [])
+
+  return (
+    <View style={commonStyles.container}>
+      {/* <View style={styles.rowContainer}>
         <View style={styles.rowItem}>
           <Text style={styles.rowItemText}>
             Sort <FontAwesome name="sort" size={15} color="black" />
@@ -129,9 +151,9 @@ export default function SearchResult() {
             }}
           />
         </View>
-      </View>
+      </View> */}
 
-      {selectedPrice && (
+      {/* {selectedPrice && (
         <Text style={styles.selectedText}>
           Selected Price Range: {selectedPrice}
         </Text>
@@ -145,55 +167,45 @@ export default function SearchResult() {
         <Text style={styles.selectedText}>
           Selected Locality: {selectedProvince}
         </Text>
-      )}
+      )} */}
 
       <ScrollView style={{ marginTop: 20 }}>
-        <View style={scrollStyles.container}>
-          <View style={scrollStyles.imageContainer}>
-            <Image
-              source={require("./../../assets/images/hotel.jpg")}
-              style={scrollStyles.image}
-            />
-          </View>
-
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              paddingBottom: 5,
-            }}
-          >
-            <View
-              style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
-            >
-              {[...Array(5)].map((_, index) => (
-                <Ionicons
-                  key={index}
-                  name="star"
-                  size={15}
-                  color={index < 4 ? "gold" : "black"}
+        {data.map((hotel) => (
+          <TouchableOpacity onPress={() => handleDetails(hotel.id)}>
+            <View key={hotel.id} style={scrollStyles.container}>
+              <View style={scrollStyles.imageContainer}>
+                <Image
+                  source={require("./../../assets/images/hotel.jpg")}
+                  style={scrollStyles.image}
                 />
-              ))}
-              <Text style={scrollStyles.text}>4.0 (20 Reviewers)</Text>
+              </View>
+              {/* 
+            <View style={{ flexDirection: 'row', alignItems: 'center', paddingBottom: 5 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+                {[...Array(5)].map((_, starIndex) => (
+                  <Ionicons
+                    key={starIndex}
+                    name="star"
+                    size={15}
+                    color={starIndex < 4 ? "gold" : "black"}
+                  />
+                ))}
+                <Text style={scrollStyles.text}>4.0 (20 Reviewers)</Text>
+              </View>
+            </View> */}
+
+              <Text style={scrollStyles.title}>{hotel.name || 'Hotel 1'}</Text>
+
+              <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 5 }}>
+                <Ionicons name="location" size={20} color="black" />
+                <Text style={scrollStyles.text}>{hotel.address || 'District 9, HCMC'}</Text>
+              </View>
+
+              {/* <Text style={scrollStyles.text}>{hotel.price || '300.000 VND'}</Text> */}
             </View>
-          </View>
+          </TouchableOpacity>
 
-          <Text style={scrollStyles.title}>Hotel 1</Text>
-
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              paddingTop: 5,
-              justifyContent: "flex-start",
-            }}
-          >
-            <Ionicons name="location" size={20} color="black" />
-            <Text style={scrollStyles.text}>District 9, HCMC</Text>
-          </View>
-
-          <Text style={scrollStyles.text}>300.000 VND</Text>
-        </View>
+        ))}
       </ScrollView>
     </View>
   );
@@ -220,7 +232,7 @@ const styles = StyleSheet.create({
   },
   rowContainer: {
     flexDirection: "row",
-    marginTop: 20,
+    marginTop: 10,
     width: "100%",
     justifyContent: "space-between",
   },
