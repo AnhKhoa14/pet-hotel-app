@@ -10,7 +10,6 @@ import RNPickerSelect from 'react-native-picker-select';
 import moment from 'moment';
 import API from '../../config/AXIOS_API';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { color } from 'react-native-elements/dist/helpers';
 
 const months = [
   { label: 'Tháng 1', value: '01' },
@@ -52,7 +51,8 @@ const Booking = () => {
   const [selectedDayGui, setSelectedDayGui] = useState(null);
   const [selectedDayTra, setSelectedDayTra] = useState(null);
   const today = moment();
-  const daysInMonth = getDaysInMonth(selectedMonthGui, year);
+  const daysInMonthGui = getDaysInMonth(selectedMonthGui, year);
+  const daysInMonthTra = getDaysInMonth(selectedMonthTra, year);
   const [errorMessage, setErrorMessage] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -293,7 +293,7 @@ const Booking = () => {
         </View>
         <View style={styles.rowNgayGui}>
           <FlatList
-            data={daysInMonth}
+            data={daysInMonthGui}
             keyExtractor={(item) => item.day.toString()}
             horizontal
             renderItem={({ item }) => {
@@ -345,7 +345,7 @@ const Booking = () => {
         </View>
         <View style={styles.rowNgayTra}>
           <FlatList
-            data={daysInMonth}
+            data={daysInMonthTra}
             keyExtractor={(item) => item.day.toString()}
             horizontal
             renderItem={({ item }) => {

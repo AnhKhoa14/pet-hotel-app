@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, Modal } from 'react-native';
 import { useRouter } from 'expo-router';
 import { commonStyles } from '../../style';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -25,7 +25,37 @@ const ProfileScreen = () => {
   const [userInfo, setUserInfor] = useState();
   const [userId, setUserId] = useState(null);
 
-  const handleUpdate = () => {
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const handleUpdate = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      let updateData = {
+        username: userInfo.username,
+        email: email,
+        fullName: fullName,
+        dob: formattedDate,
+        address: address,
+        gender: gender,
+        phone: phone
+      }
+      console.log(updateData);
+      const response = await API.put(`users/${userId}`, updateData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      if (response.status === 200) {
+        console.log(response.data);
+        setErrorMessage("Update successfully");
+        setIsModalVisible(true);
+      } else {
+        console.log("khong duoc");
+      }
+    } catch (error) {
+      console.error('Error update profile', error);
+    }
     // router.push('/');
   };
 
@@ -85,12 +115,19 @@ const ProfileScreen = () => {
 
   const onChangeDate = (event, selectedDate) => {
     setShow(false);
-    if (event.type === 'set' && selectedDate) { // Kiểm tra nếu người dùng đã chọn một ngày
+    if (event.type === 'set' && selectedDate) {
       setDate(selectedDate);
-      setFormattedDate(selectedDate.toLocaleDateString());
+      // Định dạng ngày thành yyyy-mm-dd
+      const year = selectedDate.getFullYear();
+      const month = String(selectedDate.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+      const day = String(selectedDate.getDate()).padStart(2, '0');
+
+      const formattedDate = `${year}-${month}-${day}`;
+      setFormattedDate(formattedDate);
     }
   };
-  
+
+
 
   const showDatePicker = () => {
     setShow(true);
@@ -190,9 +227,9 @@ const ProfileScreen = () => {
             style={styles.picker}
             onValueChange={(itemValue) => setGender(itemValue)}
           >
-            <Picker.Item label="Male" value="male" />
-            <Picker.Item label="Female" value="female" />
-            <Picker.Item label="Other" value="other" />
+            <Picker.Item label="Male" value="Male" />
+            <Picker.Item label="Female" value="Female" />
+            <Picker.Item label="Other" value="Other" />
           </Picker>
         </View>
         <Text style={styles.header}>
@@ -220,6 +257,25 @@ const ProfileScreen = () => {
             <Text style={commonStyles.textMainButton}>{t('update')}</Text>
           </TouchableOpacity>
         </View>
+
+        <Modal
+          transparent={true}
+          animationType="slide"
+          visible={isModalVisible}
+          onRequestClose={() => setIsModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalText}>{errorMessage}</Text>
+              <TouchableOpacity
+                onPress={() => setIsModalVisible(false)}
+                style={styles.buttonClose}
+              >
+                <Text style={styles.textClose}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </ScrollView>
     </SafeAreaView>
   );
@@ -253,6 +309,36 @@ const styles = StyleSheet.create({
   },
   dateInput: {
     color: '#000',
+  },
+
+
+
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '90%',
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    fontSize:18,
+    textAlign: 'center',
+  },
+  buttonClose: {
+    backgroundColor: '#4EA0B7',
+    padding: 5,
+    borderRadius: 5,
+  },
+  textClose: {
+    color: 'white',
+    fontSize:16
   },
 });
 

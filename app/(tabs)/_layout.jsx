@@ -67,7 +67,7 @@ export default function TabLayout() {
             />
 
             <Tabs.Screen
-                name='calendar'
+                name='schedule'
                 options={{
                     title: 'Calendar',
                     headerShown: false,
