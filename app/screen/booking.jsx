@@ -201,7 +201,7 @@ const Booking = () => {
 
 
 
-  const handleBooking = () => {
+  const handleBooking = async () => {
     const bookingData = {
       startDate: selectedDayGui.format("YYYY-MM-DD"),
       endDate: selectedDayTra.format("YYYY-MM-DD"),
@@ -215,7 +215,7 @@ const Booking = () => {
       totalPrices: totalPrice
     };
     console.log(bookingData);
-    AsyncStorage.setItem('booking', JSON.stringify(bookingData));
+    await AsyncStorage.setItem('booking', JSON.stringify(bookingData));
     router.push('/screen/confirmBooking')
 
   }

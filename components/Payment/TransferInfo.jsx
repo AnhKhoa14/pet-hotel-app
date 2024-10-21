@@ -19,6 +19,8 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import TransferInfoField from "./TransferInfoField";
 import * as MediaLibrary from "expo-media-library"; // Thêm vào để sử dụng
 import { useRouter } from "expo-router";
+import API from "../../config/AXIOS_API";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const socket = SocketIOClient("http://192.168.1.7:8080");
 
@@ -30,12 +32,14 @@ const TransferInfo = ({
   description,
   qrCode,
   orderCode,
+  paymentLinkId,
 }) => {
   const [bank, setBank] = useState({ logo: undefined, name: undefined });
   const [visible, setVisible] = useState(false);
-  const [status, setStatus] = useState(false);
+  const [isPaymentUpdated, setIsPaymentUpdated] = useState(false);
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+  const [orderStatus, setOrderStatus] = useState("");
 
   const viewShotRef = useRef();
   const navigation = useNavigation();
@@ -44,8 +48,8 @@ const TransferInfo = ({
 
   // Sử dụng MediaLibrary để yêu cầu quyền truy cập ảnh
   const getPermission = async () => {
-    const { status } = await MediaLibrary.requestPermissionsAsync();
-    return status === "granted";
+    const { isPaymentUpdated } = await MediaLibrary.requestPermissionsAsync();
+    return isPaymentUpdated === "granted";
   };
 
   const captureAndSaveImage = async () => {
@@ -96,12 +100,12 @@ const TransferInfo = ({
 
     socket.on("paymentUpdated", (data) => {
       if (data.orderId === orderCode) {
-        setStatus(true);
+        setIsPaymentUpdated(true);
         socket.emit("leaveOrderRoom", orderCode);
         setTimeout(() => {
           // router.push("screen/resultScreen", { orderCode: orderCode });
           router.push({
-            pathname: "screen/success",
+            pathname: `screen/success?code=00&id=${paymentLinkId}&cancel=false&status=PAID&orderCode=${orderCode}`,
             params: { orderCode },
           }); // Điều hướng tới SuccessScreen
         }, 3000);
@@ -123,17 +127,56 @@ const TransferInfo = ({
           text: "Xác nhận",
           // onPress: () =>
           //   router.push({
-          //     pathname: "screen/resultScreen", 
+          //     pathname: "screen/resultScreen",
           //     params: { orderCode: orderCode, status: "canceled" }
           //   }),
-          onPress: () => router.push({
-            pathname: "screen/cancel",
-            params: { orderCode },
-          }), // Điều hướng tới CancelScreen
+          onPress: () => {
+            handleCancel();
+          }, // Điều hướng tới CancelScreen
         },
       ],
       { cancelable: false }
     );
+  };
+
+  const handleCancel = async () => {
+    try {
+      const updateStatus = "CANCELLED";
+      setOrderStatus(updateStatus);
+      await handleUpdatePayment(updateStatus);
+
+      const response = await API.put(`/payment/${orderCode}`);
+      if (response.data.error === 0) {
+        router.push({
+          pathname: `screen/cancel?code=00&id=${paymentLinkId}&cancel=true&status=CANCELLED&orderCode=${orderCode}`,
+          params: { orderCode },
+        });
+      } else {
+        Alert.alert("thông báo", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error while canceling order:", error);
+    }
+  };
+
+  const handleUpdatePayment = async (status) => {
+    const token = await AsyncStorage.getItem("token");
+    try {
+      const response = await API.put(`/payment/status/${orderCode}?status=${status}`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      if(response.status === 200){
+        console.log("Update payment success", response.data);
+        Alert.alert("Success", "Update payment success");
+      } else {
+        console.log("Update payment failed", response.data);
+        Alert.alert("Failed", "Update payment failed");
+      }
+    } catch (error) {
+      console.error("Error while updating payment:", error);
+    }
   };
 
   return (
@@ -204,7 +247,7 @@ const TransferInfo = ({
             justifyContent: "center",
           }}
         >
-          {!status && (
+          {!isPaymentUpdated && (
             <>
               <ActivityIndicator
                 size="small"
@@ -214,7 +257,7 @@ const TransferInfo = ({
               <Text>Đang chờ thanh toán</Text>
             </>
           )}
-          {status && (
+          {isPaymentUpdated && (
             <>
               <FontAwesome name="check" size={20} color="#A4C936" />
               <Text>Thanh toán thành công</Text>

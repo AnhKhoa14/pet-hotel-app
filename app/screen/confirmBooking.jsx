@@ -133,7 +133,10 @@ const ConfirmBooking = () => {
             });
             if (response.status === 201) {
                 console.log("Services:", response.data);
-                router.push('screen/bookingSuccess');
+                router.push({
+                    pathname: 'screen/bookingSuccess',
+                    params: {id: response.data.id}
+                });
             }
         } catch (error) {
             console.error("Error fetching services booking:", error);

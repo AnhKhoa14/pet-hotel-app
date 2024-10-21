@@ -11,7 +11,7 @@ import TransferInfo from "../../components/Payment/TransferInfo";
 
 const Payment = () => {
   const router = useRouter();
-  const { accountName, accountNumber, amount, bin, description, qrCode, orderCode } = useLocalSearchParams();
+  const { accountName, accountNumber, amount, bin, description, qrCode, orderCode, paymentLinkId } = useLocalSearchParams();
 
 
   return (
@@ -27,6 +27,7 @@ const Payment = () => {
             description={description}
             qrCode={qrCode}
             orderCode={orderCode}
+            paymentLinkId={paymentLinkId}
           />
         </SafeAreaView>
       </PaperProvider>
