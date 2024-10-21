@@ -8,6 +8,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
 import DropDownPicker from 'react-native-dropdown-picker';
 import API from '../../config/AXIOS_API';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const Pet = () => {
@@ -17,6 +18,10 @@ const Pet = () => {
     const [open, setOpen] = useState(false);
     const [pets, setPets] = useState([]);
 
+    const petOptions = pets.map(pet => ({
+        label: pet.name,
+        value: pet.id
+    }));
 
     // const petDetails = {
     //     itachi: {
@@ -48,21 +53,27 @@ const Pet = () => {
     //     },
     // };
 
-    const selectedPetInfo = pets.find(pet => pet.name.toLowerCase() === selectedPet);
+    const selectedPetInfo = pets.find(pet => pet.id === selectedPet);
 
-    const userId = 1;
+    console.log(selectedPetInfo);
+
+    const [userId,setUserId] = useState(null);
 
     useEffect(() => {
         const fetchPetData = async () => {
             try {
+                const userIda = await AsyncStorage.getItem('userId');
+                setUserId(userIda);
+                console.log("ccc");
+                console.log(userId);
                 const response = await API.get(`/pets/users/${userId}`);
+                console.log("Pet dataaaa:", response.data);
                 if (response.status === 200) {
-                    setPets(response.data);
+                    setPets(response.data.content);
                     if (response.data.length > 0) setSelectedPet(response.data[0].name.toLowerCase());
                     console.log("Pet data:", response.data);
                 } else {
                     console.log("No pet data found");
-
                 }
             } catch (error) {
                 console.error('Fetch pet data failed:', error);
@@ -91,7 +102,7 @@ const Pet = () => {
                         <DropDownPicker
                             open={open}
                             value={selectedPet}
-                            items={pets}
+                            items={petOptions}
                             setOpen={setOpen}
                             setValue={setSelectedPet}
                             setItems={setPets}
@@ -111,38 +122,31 @@ const Pet = () => {
             <View style={styles.petInfoContainer}>
 
                     <Text style={styles.petName}>{selectedPetInfo? selectedPetInfo.name : 'NA'}  </Text>
-                    <Text style={styles.petDetails}>{`${selectedPetInfo? selectedPetInfo.breed :'NA'} · ${selectedPetInfo? selectedPetInfo.age:'NA'}`}</Text>
-                    {/* <Text style={styles.petName}>{petData.name || 'Loading...'}</Text> */}
-                    {/* <Text style={styles.petDetails}>{petData.breed ? `${petData.breed} · ${petData.age}y` : ''}</Text> */}
+                    <Text style={styles.petDetails}>{`${selectedPetInfo? selectedPetInfo.breed :'NA'}`}</Text>
+
 
                     <View style={styles.infoCardsContainer}>
                         <View style={styles.infoCard}>
                             <Text style={styles.infoCardLabel}>Cân Nặng</Text>
-                            {/* <Text style={styles.infoCardValue}>{petData.weight || 'N/A'} kg</Text> */}
-                            <Text style={styles.infoCardValue}>{selectedPetInfo? selectedPetInfo.weight: 'NA'}</Text>
+                            <Text style={styles.infoCardValue}>{selectedPetInfo? selectedPetInfo.weight +' Kg': 'NA'}</Text>
                         </View>
                         <View style={styles.infoCard}>
-                            <Text style={styles.infoCardLabel}>Chiều Dài</Text>
-                            {/* <Text style={styles.infoCardValue}>{petData.height || 'N/A'} cm</Text> */}
-                            <Text style={styles.infoCardValue}>{selectedPetInfo? selectedPetInfo.length:'NA'}</Text>
+                            <Text style={styles.infoCardLabel}>Tuổi lồn</Text>
+                            <Text style={styles.infoCardValue}>{selectedPetInfo? selectedPetInfo.age:'NA'}</Text>
                         </View>
                         <View style={styles.infoCard}>
                             <Text style={styles.infoCardLabel}>Màu Sắc</Text>
                             <Text style={styles.infoCardValue}>{selectedPetInfo? selectedPetInfo.color:'NA'}</Text>
-                            {/* <Text style={styles.infoCardValue}>{petData.color || 'N/A'}</Text> */}
                         </View>
                     </View>
-                    <View>
+                    {/* <View>
                         <Text style={{ fontSize: 18, marginLeft: 20, marginTop: 20, color: '#000' }}>
                             Ghi chú về thú cưng
                         </Text>
                         <Text style={{ padding: 15, fontSize: 16, color: '#888' }}>
                             {selectedPetInfo?selectedPetInfo.notes:'NA'}
-                            {/* {petData.name ?
-                        "Itachi là một chú chó Bulldog 3 tuổi, rất thông minh. Nó là một người bạn tuyệt vời và dễ chăm sóc, thích bầu bạn và đi dạo."
-                        : 'No notes available'} */}
                         </Text>
-                    </View>
+                    </View> */}
                 </View>
         </SafeAreaView>
     );
@@ -231,6 +235,7 @@ const styles = StyleSheet.create({
         borderRadius: 20
     },
     petInfoContainer: {
+        height:'100%',
         backgroundColor: '#fff',
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
