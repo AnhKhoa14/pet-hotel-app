@@ -3,6 +3,7 @@ import {
   ScrollView,
   Text,
   StyleSheet,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -13,7 +14,7 @@ import { commonStyles } from "../../style";
 
 const Payment = () => {
   const router = useRouter();
-  const { accountName, accountNumber, amount, bin, description, qrCode, orderCode } = useLocalSearchParams();
+  const { accountName, accountNumber, amount, bin, description, qrCode, orderCode, paymentLinkId } = useLocalSearchParams();
 
 
   return (
@@ -30,6 +31,7 @@ const Payment = () => {
               description={description}
               qrCode={qrCode}
               orderCode={orderCode}
+              paymentLinkId={paymentLinkId}
             />
           </View>
         </SafeAreaView>

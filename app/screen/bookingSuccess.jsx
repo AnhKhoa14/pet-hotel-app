@@ -7,11 +7,13 @@ import SuccessIcon from "./../../assets/images/success.png";
 import API from '../../config/AXIOS_API';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { use } from 'i18next';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 const BookingSuccess = () => {
     const [bookingData, setBookingData] = useState(null);
     const router = useRouter();
+
+    const {id} = useLocalSearchParams();
 
     useEffect(() => {
         // Fetch the booking data and token from AsyncStorage
@@ -34,14 +36,21 @@ const BookingSuccess = () => {
         fetchBookingData();
     }, []);
 
+    const returnUrl = "http://192.168.100.10:8081/screen/success";
+    const cancelUrl = "http://192.168.100.10:8081/screen/cancel";
+
     const handlePayment = async () => {
         const token = await AsyncStorage.getItem('token');
         console.log("Token:", token);
         console.log("Booking Data:", bookingData?.id);
         try {
-            const response = await API.post(`/payment/create-paymentlink/booking/9`, {}, {
+            const response = await API.post(`/payment/create-paymentlink/booking/${id}`, {}, {
                 headers: {
                     Authorization: `Bearer ${token}`,
+                },
+                params: {
+                    returnUrl: returnUrl,
+                    cancelUrl: cancelUrl,
                 }
             });
 
@@ -52,7 +61,7 @@ const BookingSuccess = () => {
                 //     Linking.openURL(checkoutUrl).catch((err) => console.error('Failed to open URL:', err));
                 // }
 
-                const { accountName, accountNumber, amount, bin, description, qrCode, orderCode } = response.data;
+                const { accountName, accountNumber, amount, bin, description, qrCode, orderCode, paymentLinkId } = response.data;
                 console.log("Account name:", accountName);
                 console.log("Account number:", accountNumber);
                 console.log("Amount:", amount);
@@ -60,6 +69,7 @@ const BookingSuccess = () => {
                 console.log("Description:", description);
                 console.log("QR Code:", qrCode);
                 console.log("Order Code:", orderCode);
+                console.log("Payment Link ID:", paymentLinkId);
 
 
                 router.push({
@@ -72,6 +82,7 @@ const BookingSuccess = () => {
                         description,
                         qrCode,
                         orderCode,
+                        paymentLinkId,
                     }
                 });
             }

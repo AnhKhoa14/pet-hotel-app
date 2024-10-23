@@ -19,8 +19,10 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import TransferInfoField from "./TransferInfoField";
 import * as MediaLibrary from "expo-media-library"; // Thêm vào để sử dụng
 import { useRouter } from "expo-router";
+import API from "../../config/AXIOS_API";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const socket = SocketIOClient("http://192.168.1.7:8080");
+const socket = SocketIOClient("http://192.168.100.10:8080");
 
 const TransferInfo = ({
   accountName,
@@ -30,12 +32,16 @@ const TransferInfo = ({
   description,
   qrCode,
   orderCode,
+  paymentLinkId,
 }) => {
   const [bank, setBank] = useState({ logo: undefined, name: undefined });
   const [visible, setVisible] = useState(false);
-  const [status, setStatus] = useState(false);
+  const [isPaymentUpdated, setIsPaymentUpdated] = useState(false);
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+  const [orderStatus, setOrderStatus] = useState("");
+  const [statusData, setstatusData] = useState({});
+  const [checkStatus, setcheckStatus] = useState({});
 
   const viewShotRef = useRef();
   const navigation = useNavigation();
@@ -44,8 +50,8 @@ const TransferInfo = ({
 
   // Sử dụng MediaLibrary để yêu cầu quyền truy cập ảnh
   const getPermission = async () => {
-    const { status } = await MediaLibrary.requestPermissionsAsync();
-    return status === "granted";
+    const { isPaymentUpdated } = await MediaLibrary.requestPermissionsAsync();
+    return isPaymentUpdated === "granted";
   };
 
   const captureAndSaveImage = async () => {
@@ -68,7 +74,7 @@ const TransferInfo = ({
           Alert.alert(
             "",
             "Image saved successfully.",
-            [{ text: "OK", onPress: () => {} }],
+            [{ text: "OK", onPress: () => { } }],
             { cancelable: false }
           );
         }
@@ -92,48 +98,128 @@ const TransferInfo = ({
       }
     })();
 
-    socket.emit("joinOrderRoom", orderCode);
+    // socket.emit("joinOrderRoom", orderCode);
+    // console.log("orderCode co gi day",orderCode);
 
-    socket.on("paymentUpdated", (data) => {
-      if (data.orderId === orderCode) {
-        setStatus(true);
-        socket.emit("leaveOrderRoom", orderCode);
-        setTimeout(() => {
-          // router.push("screen/resultScreen", { orderCode: orderCode });
-          router.push({
-            pathname: "screen/success",
-            params: { orderCode },
-          }); // Điều hướng tới SuccessScreen
-        }, 3000);
-      }
-    });
+    // socket.on("paymentUpdated", (data) => {
+    //   console.log("data co gi day",data);
+    //   if (data.orderId === orderCode) {
+    //     setIsPaymentUpdated(true);
+    //     socket.emit("leaveOrderRoom", orderCode);
+    //     setTimeout(() => {
+    //       console.log("time out");
+    //       // router.push("screen/resultScreen", { orderCode: orderCode });
+    //       router.push({
+    //         pathname: `screen/success?code=00&id=${paymentLinkId}&cancel=false&status=PAID&orderCode=${orderCode}`,
+    //         params: { orderCode },
+    //       }); // Điều hướng tới SuccessScreen
+    //     }, 3000);
+    //   }
+    // });
 
-    return () => {
-      socket.emit("leaveOrderRoom", orderCode);
-    };
+    // return () => {
+    //   socket.emit("leaveOrderRoom", orderCode);
+    // };
   }, []);
+
+  useEffect(() => {
+    let intervalId; // Declare variable to store interval ID
+  
+    const fetchStatus = async () => {
+      try {
+        const response = await API.get(`/payment/${orderCode}`);
+        const statusData = response.data.data;
+        let updateStatus;
+
+        if (statusData.status === "PAID") {
+          clearInterval(intervalId); 
+          updateStatus="PAID";
+          handleUpdatePayment(updateStatus);
+          router.push({
+            pathname: `screen/success`,
+            params: { orderCode },
+          });
+        } else if (statusData.status === "CANCELLED"){
+          clearInterval(intervalId); 
+          updateStatus="CANCELLED";
+          handleUpdatePayment(updateStatus);
+          router.push({
+            pathname: `screen/cancel`,
+            params: { orderCode },
+          });
+          console.log(statusData.status);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  
+    intervalId = setInterval(fetchStatus, 3000);
+  
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [orderCode]); 
+  
+  
+  
 
   const cancelOrderHanlde = async () => {
     Alert.alert(
       "Hủy thanh toán",
       "Bạn có muốn hủy đơn hàng không?",
       [
-        { text: "Hủy bỏ", onPress: () => {} },
+        { text: "Hủy bỏ", onPress: () => { } },
         {
           text: "Xác nhận",
           // onPress: () =>
           //   router.push({
-          //     pathname: "screen/resultScreen", 
+          //     pathname: "screen/resultScreen",
           //     params: { orderCode: orderCode, status: "canceled" }
           //   }),
-          onPress: () => router.push({
-            pathname: "screen/cancel",
-            params: { orderCode },
-          }), // Điều hướng tới CancelScreen
+          onPress: () => {
+            handleCancel();
+          }, // Điều hướng tới CancelScreen
         },
       ],
       { cancelable: false }
     );
+  };
+
+  const handleCancel = async () => {
+    try {
+
+      const response = await API.put(`/payment/${orderCode}`);
+      if (response.status === 200) {
+        // router.push({
+        //   pathname: `screen/cancel?code=00&id=${paymentLinkId}&cancel=true&status=CANCELLED&orderCode=${orderCode}`,
+        //   params: { orderCode },
+        // });
+        console.log("cancel thanh cong");
+      } else {
+        console.log("cancel that bai");
+      }
+    } catch (error) {
+      console.error("Error while canceling order:", error);
+    }
+  };
+
+  const handleUpdatePayment = async (status) => {
+    const token = await AsyncStorage.getItem("token");
+    try {
+      const response = await API.put(`/payment/status/${orderCode}?status=${status}`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      if (response.status === 200) {
+        console.log("Update payment success", response.data);
+      } else {
+        console.log("Update payment failed", response.data);
+      }
+    } catch (error) {
+      console.error("Error while updating payment:", error);
+    }
   };
 
   return (
@@ -204,7 +290,7 @@ const TransferInfo = ({
             justifyContent: "center",
           }}
         >
-          {!status && (
+          {!isPaymentUpdated && (
             <>
               <ActivityIndicator
                 size="small"
@@ -214,7 +300,7 @@ const TransferInfo = ({
               <Text>Đang chờ thanh toán</Text>
             </>
           )}
-          {status && (
+          {isPaymentUpdated && (
             <>
               <FontAwesome name="check" size={20} color="#A4C936" />
               <Text>Thanh toán thành công</Text>

@@ -171,8 +171,8 @@ export default function SearchResult() {
 
       <ScrollView style={{ marginTop: 20 }}>
         {data.map((hotel) => (
-          <TouchableOpacity onPress={() => handleDetails(hotel.id)}>
-            <View key={hotel.id} style={scrollStyles.container}>
+          <TouchableOpacity key={hotel.id} onPress={() => handleDetails(hotel.id)}>
+            <View  style={scrollStyles.container}>
               <View style={scrollStyles.imageContainer}>
                 <Image
                   source={require("./../../assets/images/hotel.jpg")}
