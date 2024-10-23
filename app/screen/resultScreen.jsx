@@ -7,11 +7,14 @@ import { useNavigation } from "@react-navigation/native";
 import API from "../../config/AXIOS_API";
 import OrderTable from "../../components/Payment/OrderTable";
 import PaymentFieldTable from "../../components/Payment/PaymentFieldTable";
+import { commonStyles } from '../../style';
 
 export default function ResultScreen() {
   const navigation = useNavigation();
   const [order, setOrder] = useState();
   const route = useRoute();
+  const [searchParams] = useSearchParams();
+  const query = searchParams.query; // Lấy giá trị của query
 
   useEffect(() => {
     (async () => {
@@ -40,7 +43,8 @@ export default function ResultScreen() {
         <OrderTable data={order} />
         <PaymentFieldTable data={order?.webhook_snapshot?.data} />
       </SafeAreaView>
-      <Button mode="text" onPress={() => navigation.navigate("Demo")} style={styles.button}>
+      {/* <Button mode="text" onPress={() => navigation.navigate("Demo")} style={styles.button}> */}
+      <Button mode="text" onPress={() => handleSearch} style={styles.button}>
         Quay về
       </Button>
     </ScrollView>

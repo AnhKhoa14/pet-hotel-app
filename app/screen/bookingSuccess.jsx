@@ -36,8 +36,8 @@ const BookingSuccess = () => {
         fetchBookingData();
     }, []);
 
-    const returnUrl = "http://192.168.100.34:8081/screen/success";
-    const cancelUrl = "http://192.168.100.34:8081/screen/cancel";
+    const returnUrl = "http://192.168.100.10:8081/screen/success";
+    const cancelUrl = "http://192.168.100.10:8081/screen/cancel";
 
     const handlePayment = async () => {
         const token = await AsyncStorage.getItem('token');

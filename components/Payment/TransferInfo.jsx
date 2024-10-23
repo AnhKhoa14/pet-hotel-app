@@ -22,7 +22,7 @@ import { useRouter } from "expo-router";
 import API from "../../config/AXIOS_API";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const socket = SocketIOClient("http://192.168.1.7:8080");
+const socket = SocketIOClient("http://192.168.100.10:8080");
 
 const TransferInfo = ({
   accountName,
@@ -40,6 +40,8 @@ const TransferInfo = ({
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
   const [orderStatus, setOrderStatus] = useState("");
+  const [statusData, setstatusData] = useState({});
+  const [checkStatus, setcheckStatus] = useState({});
 
   const viewShotRef = useRef();
   const navigation = useNavigation();
@@ -72,7 +74,7 @@ const TransferInfo = ({
           Alert.alert(
             "",
             "Image saved successfully.",
-            [{ text: "OK", onPress: () => {} }],
+            [{ text: "OK", onPress: () => { } }],
             { cancelable: false }
           );
         }
@@ -96,33 +98,78 @@ const TransferInfo = ({
       }
     })();
 
-    socket.emit("joinOrderRoom", orderCode);
+    // socket.emit("joinOrderRoom", orderCode);
+    // console.log("orderCode co gi day",orderCode);
 
-    socket.on("paymentUpdated", (data) => {
-      if (data.orderId === orderCode) {
-        setIsPaymentUpdated(true);
-        socket.emit("leaveOrderRoom", orderCode);
-        setTimeout(() => {
-          // router.push("screen/resultScreen", { orderCode: orderCode });
-          router.push({
-            pathname: `screen/success?code=00&id=${paymentLinkId}&cancel=false&status=PAID&orderCode=${orderCode}`,
-            params: { orderCode },
-          }); // Điều hướng tới SuccessScreen
-        }, 3000);
-      }
-    });
+    // socket.on("paymentUpdated", (data) => {
+    //   console.log("data co gi day",data);
+    //   if (data.orderId === orderCode) {
+    //     setIsPaymentUpdated(true);
+    //     socket.emit("leaveOrderRoom", orderCode);
+    //     setTimeout(() => {
+    //       console.log("time out");
+    //       // router.push("screen/resultScreen", { orderCode: orderCode });
+    //       router.push({
+    //         pathname: `screen/success?code=00&id=${paymentLinkId}&cancel=false&status=PAID&orderCode=${orderCode}`,
+    //         params: { orderCode },
+    //       }); // Điều hướng tới SuccessScreen
+    //     }, 3000);
+    //   }
+    // });
 
-    return () => {
-      socket.emit("leaveOrderRoom", orderCode);
-    };
+    // return () => {
+    //   socket.emit("leaveOrderRoom", orderCode);
+    // };
   }, []);
+
+  useEffect(() => {
+    let intervalId; // Declare variable to store interval ID
+  
+    const fetchStatus = async () => {
+      try {
+        const response = await API.get(`/payment/${orderCode}`);
+        const statusData = response.data.data;
+        let updateStatus;
+
+        if (statusData.status === "PAID") {
+          clearInterval(intervalId); 
+          updateStatus="PAID";
+          handleUpdatePayment(updateStatus);
+          router.push({
+            pathname: `screen/success`,
+            params: { orderCode },
+          });
+        } else if (statusData.status === "CANCELLED"){
+          clearInterval(intervalId); 
+          updateStatus="CANCELLED";
+          handleUpdatePayment(updateStatus);
+          router.push({
+            pathname: `screen/cancel`,
+            params: { orderCode },
+          });
+          console.log(statusData.status);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  
+    intervalId = setInterval(fetchStatus, 3000);
+  
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [orderCode]); 
+  
+  
+  
 
   const cancelOrderHanlde = async () => {
     Alert.alert(
       "Hủy thanh toán",
       "Bạn có muốn hủy đơn hàng không?",
       [
-        { text: "Hủy bỏ", onPress: () => {} },
+        { text: "Hủy bỏ", onPress: () => { } },
         {
           text: "Xác nhận",
           // onPress: () =>
@@ -141,18 +188,16 @@ const TransferInfo = ({
 
   const handleCancel = async () => {
     try {
-      const updateStatus = "CANCELLED";
-      setOrderStatus(updateStatus);
-      await handleUpdatePayment(updateStatus);
 
       const response = await API.put(`/payment/${orderCode}`);
-      if (response.data.error === 0) {
-        router.push({
-          pathname: `screen/cancel?code=00&id=${paymentLinkId}&cancel=true&status=CANCELLED&orderCode=${orderCode}`,
-          params: { orderCode },
-        });
+      if (response.status === 200) {
+        // router.push({
+        //   pathname: `screen/cancel?code=00&id=${paymentLinkId}&cancel=true&status=CANCELLED&orderCode=${orderCode}`,
+        //   params: { orderCode },
+        // });
+        console.log("cancel thanh cong");
       } else {
-        Alert.alert("thông báo", response.data.message);
+        console.log("cancel that bai");
       }
     } catch (error) {
       console.error("Error while canceling order:", error);
@@ -167,12 +212,10 @@ const TransferInfo = ({
           Authorization: `Bearer ${token}`
         }
       });
-      if(response.status === 200){
+      if (response.status === 200) {
         console.log("Update payment success", response.data);
-        Alert.alert("Success", "Update payment success");
       } else {
         console.log("Update payment failed", response.data);
-        Alert.alert("Failed", "Update payment failed");
       }
     } catch (error) {
       console.error("Error while updating payment:", error);
@@ -221,10 +264,10 @@ const TransferInfo = ({
         )}
         <View style={styles.headerRight}>
           {bank.name && <Text style={styles.bankName}>{bank.name}</Text>}
-          <Text>{accountName}</Text>
         </View>
       </View>
       <View style={styles.innerContainer}>
+        <TransferInfoField label="Chủ tài khoản" text={accountName} />
         <TransferInfoField label="Số tài khoản" text={accountNumber} />
         <TransferInfoField label="Số tiền chuyển khoản" text={amount} />
         <TransferInfoField label="Nội dung chuyển khoản" text={description} />
@@ -292,9 +335,9 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     height: 50,
-    backgroundColor: "rgba( 130, 147, 240, 255)",
+    // backgroundColor: "rgba( 130, 147, 240, 255)",
     paddingVertical: 5,
-    gap: 5,
+    gap: 15,
   },
   image: {
     flex: 1,
